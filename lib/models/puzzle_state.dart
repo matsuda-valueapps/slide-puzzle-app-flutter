@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 /// パズルの進行状態を管理するモデル

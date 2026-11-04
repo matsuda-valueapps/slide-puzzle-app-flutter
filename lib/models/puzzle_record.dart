@@ -1,4 +1,3 @@
-
 import '../constants/puzzle_patterns.dart';
 import 'game_settings.dart';
 
