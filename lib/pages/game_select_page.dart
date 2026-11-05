@@ -138,90 +138,95 @@ class _GameSelectPageState extends State<GameSelectPage> {
                   // Board Size
                   _buildSectionTitle('Board Size'),
                   const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: GameSettings.availableBoardSizes.map((size) {
-                      final bool isSelected =
-                          _selectedBoardSize == size;
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      const spacing = 10.0;
+                      const itemHeight = 52.0;
 
-                      return ChoiceChip(
-                        label: Text('$size×$size'),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          if (selected) {
-                            setState(() {
-                              _selectedBoardSize = size;
-                            });
-                          }
+                      final itemWidth =
+                          (constraints.maxWidth - spacing * 2) / 3;
+
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            GameSettings.availableBoardSizes.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: spacing,
+                          mainAxisSpacing: spacing,
+                          mainAxisExtent: itemHeight,
+                        ),
+                        itemBuilder: (context, index) {
+                          final size =
+                              GameSettings.availableBoardSizes[index];
+
+                          final bool isSelected =
+                              _selectedBoardSize == size;
+
+                          return _buildBoardSizeCard(
+                            size: size,
+                            width: itemWidth,
+                            isSelected: isSelected,
+                            onTap: () {
+                              setState(() {
+                                _selectedBoardSize = size;
+                              });
+                            },
+                          );
                         },
-                        selectedColor: AppColors.primary,
-                        backgroundColor: AppColors.cardBackground,
-                        labelStyle: TextStyle(
-                          color: isSelected
-                              ? AppColors.buttonText
-                              : AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        side: BorderSide(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.border,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
                       );
-                    }).toList(),
+                    },
                   ),
 
-                  // Pattern
+                  // Pattern Preview
                   if (_selectedGameType == GameType.number) ...[
                     const SizedBox(height: 32),
+                    _buildPatternPreview(),
+                    const SizedBox(height: 32),
+
+                    // Pattern
                     _buildSectionTitle('Pattern'),
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: PuzzlePattern.values.map((pattern) {
-                        final bool isSelected =
-                            _selectedPattern == pattern;
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const spacing = 10.0;
+                        const itemHeight = 52.0;
 
-                        return ChoiceChip(
-                          label: Text(_patternLabel(pattern)),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() {
-                                _selectedPattern = pattern;
-                              });
-                            }
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics:
+                              const NeverScrollableScrollPhysics(),
+                          itemCount: PuzzlePattern.values.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: spacing,
+                            mainAxisSpacing: spacing,
+                            mainAxisExtent: itemHeight,
+                          ),
+                          itemBuilder: (context, index) {
+                            final pattern =
+                                PuzzlePattern.values[index];
+
+                            final bool isSelected =
+                                _selectedPattern == pattern;
+
+                            return _buildPatternCard(
+                              pattern: pattern,
+                              isSelected: isSelected,
+                              onTap: () {
+                                setState(() {
+                                  _selectedPattern = pattern;
+                                });
+                              },
+                            );
                           },
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.cardBackground,
-                          labelStyle: TextStyle(
-                            color: isSelected
-                                ? AppColors.buttonText
-                                : AppColors.textPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          side: BorderSide(
-                            color: isSelected
-                                ? AppColors.primary
-                                : AppColors.border,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
                         );
-                      }).toList(),
+                      },
                     ),
-                    const SizedBox(height: 24),
-
-                    // Pattern Preview
-                    _buildPatternPreview(),
                   ],
 
                   const SizedBox(height: 40),
@@ -246,6 +251,123 @@ class _GameSelectPageState extends State<GameSelectPage> {
     );
   }
 
+  /// ボードサイズ選択カード
+  Widget _buildBoardSizeCard({
+    required int size,
+    required double width,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: isSelected
+          ? AppColors.primary
+          : AppColors.cardBackground,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.border,
+              width: isSelected ? 2 : 1,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isSelected) ...[
+                Icon(
+                  Icons.check,
+                  size: 18,
+                  color: AppColors.buttonText,
+                ),
+                const SizedBox(width: 6),
+              ],
+              Flexible(
+                child: Text(
+                  '$size×$size',
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected
+                        ? AppColors.buttonText
+                        : AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// パターン選択カード
+  Widget _buildPatternCard({
+    required PuzzlePattern pattern,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: isSelected
+          ? AppColors.primary
+          : AppColors.cardBackground,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.border,
+              width: isSelected ? 2 : 1,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isSelected) ...[
+                Icon(
+                  Icons.check,
+                  size: 18,
+                  color: AppColors.buttonText,
+                ),
+                const SizedBox(width: 6),
+              ],
+              Flexible(
+                child: Text(
+                  _patternLabel(pattern),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected
+                        ? AppColors.buttonText
+                        : AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   /// 完成盤面の見本
   Widget _buildPatternPreview() {
     final previewBoard = _createPatternPreview();
@@ -253,7 +375,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
     return Column(
       children: [
         Text(
-          _patternLabel(_selectedPattern),
+          '$_selectedBoardSize×$_selectedBoardSize Preview',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -339,10 +461,11 @@ class _GameSelectPageState extends State<GameSelectPage> {
         ),
         const SizedBox(height: 10),
         Text(
-          '$_selectedBoardSize×$_selectedBoardSize Preview',
-          style: TextStyle(
-            fontSize: 13,
-            color: AppColors.textSecondary,
+          _patternLabel(_selectedPattern),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
