@@ -7,6 +7,7 @@ import 'dart:math';
 /// ・空白マスの管理
 /// ・タイルの移動可否判定
 /// ・タイルの移動
+/// ・複数タイルの移動
 /// ・シャッフル
 /// ・クリア判定
 ///
@@ -211,6 +212,116 @@ class PuzzleEngine {
 
     // タイルと空白マスを交換する。
     newBoard[blankIndex] = newBoard[tileIndex];
+    newBoard[tileIndex] = blankTile;
+
+    return newBoard;
+  }
+
+  /// 指定したタイルを空白マスまで移動できるか判定する。
+  ///
+  /// 移動可能な条件：
+  /// ・指定したタイルが空白マスと同じ行にある
+  /// ・または指定したタイルが空白マスと同じ列にある
+  /// ・指定したタイルと空白マスの間に別の空白マスがない
+  ///
+  /// 空白マスと隣接している場合も移動可能。
+  static bool canMoveTilesToBlank(
+    List<int> board,
+    int tileIndex,
+    int boardSize,
+  ) {
+    _validateBoard(board, boardSize);
+
+    final int totalTiles = boardSize * boardSize;
+
+    if (tileIndex < 0 || tileIndex >= totalTiles) {
+      return false;
+    }
+
+    // 空白マス自体は移動できない。
+    if (board[tileIndex] == blankTile) {
+      return false;
+    }
+
+    final int blankIndex = getBlankIndex(board);
+
+    final int tileRow = tileIndex ~/ boardSize;
+    final int tileColumn = tileIndex % boardSize;
+
+    final int blankRow = blankIndex ~/ boardSize;
+    final int blankColumn = blankIndex % boardSize;
+
+    // 同じ行でも列でもない場合は移動できない。
+    if (tileRow != blankRow && tileColumn != blankColumn) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /// 指定したタイルから空白マスまでの複数タイルを移動する。
+  ///
+  /// 移動可能な場合：
+  /// ・指定したタイルから空白マスまでの間にあるタイルを
+  ///   空白マスの方向へ1マスずつ移動する
+  /// ・指定したタイルの位置が新しい空白マスになる
+  /// ・新しい盤面リストを返す
+  ///
+  /// 移動不可能な場合：
+  /// nullを返す
+  ///
+  /// 元の盤面データは変更しない。
+  ///
+  /// 例：
+  /// 移動前：[1, 2, 3, 0]
+  /// 指定位置：0番目
+  /// 移動後：[0, 1, 2, 3]
+  ///
+  /// 横方向・縦方向の両方に対応する。
+  static List<int>? moveTilesToBlank(
+    List<int> board,
+    int tileIndex,
+    int boardSize,
+  ) {
+    if (!canMoveTilesToBlank(
+      board,
+      tileIndex,
+      boardSize,
+    )) {
+      return null;
+    }
+
+    final List<int> newBoard = List<int>.from(board);
+
+    final int blankIndex = getBlankIndex(newBoard);
+
+    final int tileRow = tileIndex ~/ boardSize;
+    final int blankRow = blankIndex ~/ boardSize;
+
+    int step;
+
+    // 同じ行にある場合
+    if (tileRow == blankRow) {
+      step = tileIndex < blankIndex ? 1 : -1;
+    } else {
+      // 同じ列にある場合
+      step = tileIndex < blankIndex
+          ? boardSize
+          : -boardSize;
+    }
+
+    int currentIndex = blankIndex;
+
+    // 空白マスに向かってタイルを順番に移動する。
+    while (currentIndex != tileIndex) {
+      final int nextIndex = currentIndex - step;
+
+      newBoard[currentIndex] = newBoard[nextIndex];
+
+      currentIndex = nextIndex;
+    }
+
+    // 指定したタイルの位置を新しい空白マスにする。
     newBoard[tileIndex] = blankTile;
 
     return newBoard;

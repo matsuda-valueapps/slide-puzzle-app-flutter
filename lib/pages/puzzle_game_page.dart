@@ -56,6 +56,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   bool _isSaving = false;
   bool _isCompleting = false;
 
+  /// フリック開始位置
+  Offset? _swipeStartPosition;
+
   String? get _imageId =>
       widget.initialSaveData?.imageId ?? widget.imageId;
 
@@ -152,22 +155,240 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
       return;
     }
 
-    // タイルを移動
-    final List<int>? newBoard = PuzzleEngine.moveTile(
-      _puzzleState.board,
+    // タップしたタイルから空白マスまでまとめて移動
+    _moveTilesToBlank(tileIndex);
+  }
+
+  /// 指定したタイルから空白マスまで移動
+  ///
+  /// タップ・フリック共通の移動処理
+  void _moveTilesToBlank(int tileIndex) {
+    if (_puzzleState.isPaused ||
+        _puzzleState.isCompleted ||
+        _isCompleting) {
+      return;
+    }
+
+    final int boardSize = _puzzleState.boardSize;
+    final List<int> board = _puzzleState.board;
+
+    // 範囲外のインデックスは無視
+    if (tileIndex < 0 || tileIndex >= board.length) {
+      return;
+    }
+
+    // 空白マス自体は移動できない
+    if (board[tileIndex] == PuzzleEngine.blankTile) {
+      return;
+    }
+
+    final int blankIndex =
+        PuzzleEngine.getBlankIndex(board);
+
+    // タイルと空白マスが同じ行・列にあるか確認
+    final int tileRow = tileIndex ~/ boardSize;
+    final int tileColumn = tileIndex % boardSize;
+
+    final int blankRow = blankIndex ~/ boardSize;
+    final int blankColumn = blankIndex % boardSize;
+
+    final bool sameRow = tileRow == blankRow;
+    final bool sameColumn = tileColumn == blankColumn;
+
+    // 同じ行でも列でもない場合は移動できない
+    if (!sameRow && !sameColumn) {
+      return;
+    }
+
+    // 複数タイルを移動できるか確認
+    if (!PuzzleEngine.canMoveTilesToBlank(
+      board,
       tileIndex,
-      _puzzleState.boardSize,
+      boardSize,
+    )) {
+      return;
+    }
+
+    // 空白マスまで複数タイルを移動
+    final List<int>? newBoard =
+        PuzzleEngine.moveTilesToBlank(
+      board,
+      tileIndex,
+      boardSize,
     );
 
-    // 移動できない場合は何もしない
     if (newBoard == null) {
+      return;
+    }
+
+    // 移動したタイルの枚数を計算
+    final int movedTileCount = sameRow
+        ? (blankColumn - tileColumn).abs()
+        : (blankRow - tileRow).abs();
+
+    _applyBoardMove(
+      newBoard,
+      movedTileCount,
+    );
+  }
+
+  /// フリック開始時の位置を取得
+  ///
+  /// Listenerを使用することで、
+  /// 子ウィジェットのタップ処理と競合せずに位置を取得する
+  void _handleSwipeStart(PointerDownEvent event) {
+    if (_puzzleState.isPaused ||
+        _puzzleState.isCompleted ||
+        _isCompleting) {
+      _swipeStartPosition = null;
+      return;
+    }
+
+    _swipeStartPosition = event.localPosition;
+  }
+
+  /// フリック終了時の処理
+  void _handleSwipeEnd(
+    PointerUpEvent event,
+    double boardDisplaySize,
+  ) {
+    final Offset? startPosition = _swipeStartPosition;
+
+    _swipeStartPosition = null;
+
+    if (startPosition == null ||
+        _puzzleState.isPaused ||
+        _puzzleState.isCompleted ||
+        _isCompleting) {
+      return;
+    }
+
+    final Offset endPosition = event.localPosition;
+
+    final double deltaX =
+        endPosition.dx - startPosition.dx;
+
+    final double deltaY =
+        endPosition.dy - startPosition.dy;
+
+    // 盤面の大きさから1マスのサイズを計算
+    final double tileSize =
+        boardDisplaySize / _puzzleState.boardSize;
+
+    // 最低限必要なフリック距離
+    final double minimumSwipeDistance =
+        tileSize * 0.2 > 18
+            ? tileSize * 0.2
+            : 18;
+
+    // 短すぎる操作は無視
+    if (Offset(deltaX, deltaY).distance <
+        minimumSwipeDistance) {
+      return;
+    }
+
+    // 横方向・縦方向のどちらのフリックか判定
+    final bool isHorizontalSwipe =
+        deltaX.abs() > deltaY.abs();
+
+    // フリック開始位置から対象タイルを特定
+    final int boardSize = _puzzleState.boardSize;
+
+    final int tileColumn =
+        (startPosition.dx / boardDisplaySize * boardSize)
+            .floor();
+
+    final int tileRow =
+        (startPosition.dy / boardDisplaySize * boardSize)
+            .floor();
+
+    if (tileColumn < 0 ||
+        tileColumn >= boardSize ||
+        tileRow < 0 ||
+        tileRow >= boardSize) {
+      return;
+    }
+
+    final int tileIndex =
+        tileRow * boardSize + tileColumn;
+
+    // 空白マス自体からのフリックは無視
+    if (_puzzleState.board[tileIndex] ==
+        PuzzleEngine.blankTile) {
+      return;
+    }
+
+    final int blankIndex =
+        PuzzleEngine.getBlankIndex(_puzzleState.board);
+
+    final int blankRow = blankIndex ~/ boardSize;
+    final int blankColumn = blankIndex % boardSize;
+
+    final bool sameRow = tileRow == blankRow;
+    final bool sameColumn = tileColumn == blankColumn;
+
+    // 空白マスと同じ行・列にない場合は移動できない
+    if (!sameRow && !sameColumn) {
+      return;
+    }
+
+    // 横方向のフリックの場合
+    if (isHorizontalSwipe) {
+      // 空白マスと同じ行でなければ無効
+      if (!sameRow) {
+        return;
+      }
+
+      // 空白マスの方向へフリックしているか確認
+      final bool isCorrectDirection =
+          (blankColumn > tileColumn && deltaX > 0) ||
+          (blankColumn < tileColumn && deltaX < 0);
+
+      if (!isCorrectDirection) {
+        return;
+      }
+    } else {
+      // 縦方向のフリックの場合
+      if (!sameColumn) {
+        return;
+      }
+
+      // 空白マスの方向へフリックしているか確認
+      final bool isCorrectDirection =
+          (blankRow > tileRow && deltaY > 0) ||
+          (blankRow < tileRow && deltaY < 0);
+
+      if (!isCorrectDirection) {
+        return;
+      }
+    }
+
+    // タップと共通の移動処理を実行
+    _moveTilesToBlank(tileIndex);
+  }
+
+  /// フリックキャンセル時の処理
+  void _handleSwipeCancel() {
+    _swipeStartPosition = null;
+  }
+
+  /// 盤面の更新・手数加算・完成判定
+  void _applyBoardMove(
+    List<int> newBoard,
+    int movedTileCount,
+  ) {
+    if (!mounted ||
+        _puzzleState.isPaused ||
+        _puzzleState.isCompleted ||
+        _isCompleting) {
       return;
     }
 
     setState(() {
       _puzzleState = _puzzleState.copyWith(
         board: newBoard,
-        moveCount: _puzzleState.moveCount + 1,
+        moveCount:
+            _puzzleState.moveCount + movedTileCount,
       );
     });
 
@@ -512,43 +733,62 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
   /// パズル盤面
   Widget _buildPuzzleArea(double availableWidth) {
-    final double boardSize = availableWidth > 520
+    final double boardDisplaySize = availableWidth > 520
         ? 500
         : availableWidth;
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        PuzzleBoard(
-          puzzleState: _puzzleState,
-          maxBoardSize: boardSize,
-          spacing: 4,
-          onTileTap: _handleTileTap,
-        ),
-
-        if (_puzzleState.isPaused ||
-            _puzzleState.isCompleted)
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(12),
+    return Center(
+      child: SizedBox(
+        width: boardDisplaySize,
+        height: boardDisplaySize,
+        child: Listener(
+          behavior: HitTestBehavior.opaque,
+          onPointerDown: _handleSwipeStart,
+          onPointerUp: (event) {
+            _handleSwipeEnd(
+              event,
+              boardDisplaySize,
+            );
+          },
+          onPointerCancel: (event) {
+            _handleSwipeCancel();
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PuzzleBoard(
+                puzzleState: _puzzleState,
+                maxBoardSize: boardDisplaySize,
+                spacing: 4,
+                onTileTap: _handleTileTap,
               ),
-              child: Center(
-                child: Text(
-                  _puzzleState.isCompleted
-                      ? 'Completed!'
-                      : 'Paused',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+
+              if (_puzzleState.isPaused ||
+                  _puzzleState.isCompleted)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.55),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _puzzleState.isCompleted
+                            ? 'Completed!'
+                            : 'Paused',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+            ],
           ),
-      ],
+        ),
+      ),
     );
   }
 
