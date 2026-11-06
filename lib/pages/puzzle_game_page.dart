@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../constants/picture_options.dart';
 import '../constants/puzzle_patterns.dart';
 import '../models/game_settings.dart';
 import '../models/puzzle_state.dart';
@@ -59,8 +60,26 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   /// フリック開始位置
   Offset? _swipeStartPosition;
 
+  /// 使用する画像ID
   String? get _imageId =>
       widget.initialSaveData?.imageId ?? widget.imageId;
+
+  /// 画像IDから画像ファイルのパスを取得
+  String? get _pictureAssetPath {
+    final String? imageId = _imageId;
+
+    if (imageId == null) {
+      return null;
+    }
+
+    for (final picture in pictureOptions) {
+      if (picture.id == imageId) {
+        return picture.assetPath;
+      }
+    }
+
+    return null;
+  }
 
   @override
   void initState() {
@@ -701,13 +720,11 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
               ),
             ],
           ),
-
           Container(
             width: 1,
             height: 42,
             color: AppColors.border,
           ),
-
           Column(
             children: [
               const Text(
@@ -737,6 +754,8 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         ? 500
         : availableWidth;
 
+    final String? pictureAssetPath = _pictureAssetPath;
+
     return Center(
       child: SizedBox(
         width: boardDisplaySize,
@@ -756,12 +775,59 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              PuzzleBoard(
-                puzzleState: _puzzleState,
-                maxBoardSize: boardDisplaySize,
-                spacing: 4,
-                onTileTap: _handleTileTap,
-              ),
+              // Pictureモードで画像が見つからない場合
+              if (widget.settings.isPictureMode &&
+                  pictureAssetPath == null)
+                Container(
+                  width: boardDisplaySize,
+                  height: boardDisplaySize,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.border,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(24),
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 56,
+                        color: AppColors.textSecondary,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Picture not available',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'The selected picture could not be found. Please add the picture to the picture list.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                PuzzleBoard(
+                  puzzleState: _puzzleState,
+                  maxBoardSize: boardDisplaySize,
+                  spacing: 4,
+                  pictureAssetPath: pictureAssetPath,
+                  onTileTap: _handleTileTap,
+                ),
 
               if (_puzzleState.isPaused ||
                   _puzzleState.isCompleted)
@@ -817,9 +883,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                   },
           ),
         ),
-
         const SizedBox(width: 12),
-
         Expanded(
           child: GameButton(
             text: 'Shuffle',

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'constants/picture_options.dart';
 import 'models/game_settings.dart';
 import 'models/puzzle_record.dart';
 import 'models/puzzle_save_data.dart';
 import 'pages/game_select_page.dart';
 import 'pages/home_page.dart';
+import 'pages/picture_select_page.dart';
 import 'pages/puzzle_game_page.dart';
 import 'services/puzzle_save_service.dart';
 
@@ -60,20 +62,46 @@ class _MainPageState extends State<MainPage> {
 
   // ゲームを開始する
   void _startGame(GameSettings settings) {
-    // 現時点ではPictureモードの画像素材・表示機能は未実装
+    // Pictureモードの場合は画像選択画面を開く
     if (settings.gameType == GameType.picture) {
-      _showMessage(
-        'Picture mode is not available yet.',
-      );
+      _openPictureSelect(settings);
       return;
     }
 
+    // Numberモードの場合はそのままゲームを開始する
     _openPuzzleGame(settings: settings);
+  }
+
+  // Pictureモードの画像選択画面を開く
+  void _openPictureSelect(GameSettings settings) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return PictureSelectPage(
+            pictures: pictureOptions,
+            onStart: (imageId) {
+              // 画像選択画面を閉じる
+              Navigator.of(context).pop();
+
+              // 選択した画像IDを渡してゲームを開始する
+              _openPuzzleGame(
+                settings: settings,
+                imageId: imageId,
+              );
+            },
+            onBack: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      ),
+    );
   }
 
   // パズルゲーム画面を開く
   void _openPuzzleGame({
     required GameSettings settings,
+    String? imageId,
     PuzzleSaveData? initialSaveData,
   }) {
     Navigator.of(context).push(
@@ -81,6 +109,7 @@ class _MainPageState extends State<MainPage> {
         builder: (context) {
           return PuzzleGamePage(
             settings: settings,
+            imageId: imageId,
             initialSaveData: initialSaveData,
             onBack: () {
               Navigator.of(context).pop();
@@ -147,9 +176,7 @@ class _MainPageState extends State<MainPage> {
         if (selectedType == GameType.number) {
           _resumeSavedGame(numberSave);
         } else {
-          _showMessage(
-            'Picture mode is not available yet.',
-          );
+          _resumeSavedGame(pictureSave);
         }
 
         return;
@@ -163,9 +190,7 @@ class _MainPageState extends State<MainPage> {
 
       // Pictureだけに保存データがある場合
       if (pictureSave != null) {
-        _showMessage(
-          'Picture mode is not available yet.',
-        );
+        _resumeSavedGame(pictureSave);
       }
     } catch (e) {
       if (!mounted) return;
@@ -178,6 +203,7 @@ class _MainPageState extends State<MainPage> {
   void _resumeSavedGame(PuzzleSaveData saveData) {
     _openPuzzleGame(
       settings: saveData.settings,
+      imageId: saveData.imageId,
       initialSaveData: saveData,
     );
   }

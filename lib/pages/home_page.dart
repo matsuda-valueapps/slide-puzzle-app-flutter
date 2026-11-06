@@ -51,35 +51,33 @@ class HomePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // アプリロゴ
-                          const Icon(
-                            Icons.extension_rounded,
-                            size: 88,
-                            color: AppColors.primary,
-                          ),
+                          // スライドパズルロゴ
+                          const _SlidePuzzleLogo(),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 24),
 
                           // アプリタイトル
                           const Text(
-                            'Slide Puzzle',
+                            'Eazy Slide Puzzle',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 34,
+                              fontSize: 36,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: Color(0xFF1E3A8A),
+                              letterSpacing: 0.3,
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 12),
 
                           // サブタイトル
                           const Text(
                             'Challenge Your Mind',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textSecondary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF475569),
                             ),
                           ),
 
@@ -102,7 +100,7 @@ class HomePage extends StatelessWidget {
                             icon: Icons.restore_rounded,
                             height: 58,
                             fontSize: 18,
-                            backgroundColor: AppColors.accent,
+                            backgroundColor: AppColors.buttonPrimary,
                             onPressed: onContinue,
                           ),
 
@@ -134,11 +132,12 @@ class HomePage extends StatelessWidget {
 
                           // フッター
                           const Text(
-                            'Slide Puzzle',
+                            'Eazy Slide Puzzle',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
                             ),
                           ),
                         ],
@@ -149,6 +148,85 @@ class HomePage extends StatelessWidget {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// 3×3のスライドパズルをイメージしたロゴ
+class _SlidePuzzleLogo extends StatelessWidget {
+  const _SlidePuzzleLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    const double logoSize = 88;
+    const double spacing = 3;
+
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox.square(
+        dimension: logoSize,
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              for (int row = 0; row < 3; row++) ...[
+                if (row > 0) const SizedBox(height: spacing),
+                Expanded(
+                  child: Row(
+                    children: [
+                      for (int column = 0; column < 3; column++) ...[
+                        if (column > 0) const SizedBox(width: spacing),
+                        Expanded(
+                          child: _buildTile(row, column),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 数字タイルまたは空白マスを生成
+  Widget _buildTile(int row, int column) {
+    final int number = row * 3 + column + 1;
+
+    // 右下を空白マスにする
+    if (number == 9) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            width: 1.5,
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        '$number',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

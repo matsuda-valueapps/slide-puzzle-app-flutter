@@ -1,33 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../models/picture_option.dart';
 import '../widgets/game_button.dart';
-
-/// パズルで使用する画像情報
-class PictureOption {
-  /// 画像を識別するID
-  final String id;
-
-  /// 画像の表示名
-  final String title;
-
-  /// 画像ファイルのパス
-  final String assetPath;
-
-  /// 画像の提供元・撮影者など
-  final String credit;
-
-  /// 画像のライセンス情報
-  final String license;
-
-  const PictureOption({
-    required this.id,
-    required this.title,
-    required this.assetPath,
-    required this.credit,
-    required this.license,
-  });
-}
 
 /// 画像選択画面
 class PictureSelectPage extends StatefulWidget {
@@ -131,7 +106,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
             ),
           ),
         ),
-
         Expanded(
           child: GridView.builder(
             padding: const EdgeInsets.all(16),
@@ -156,9 +130,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
             },
           ),
         ),
-
         _buildSelectedPictureInfo(),
-
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
           child: GameButton(
@@ -228,7 +200,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
                       );
                     },
                   ),
-
                   if (isSelected)
                     Positioned(
                       top: 8,
@@ -249,7 +220,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
                 ],
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -299,9 +269,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
               color: AppColors.textPrimary,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             'Credit: ${picture.credit}',
             style: const TextStyle(
@@ -309,7 +277,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
               color: AppColors.textSecondary,
             ),
           ),
-
           Text(
             'License: ${picture.license}',
             style: const TextStyle(
@@ -335,9 +302,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
               size: 64,
               color: AppColors.textSecondary,
             ),
-
             const SizedBox(height: 16),
-
             const Text(
               'No pictures available',
               textAlign: TextAlign.center,
@@ -347,9 +312,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
                 color: AppColors.textPrimary,
               ),
             ),
-
             const SizedBox(height: 8),
-
             const Text(
               'Please add pictures to continue.',
               textAlign: TextAlign.center,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../models/puzzle_state.dart';
 import '../services/puzzle_engine.dart';
+import 'picture_tile.dart';
 import 'puzzle_tile.dart';
 
 /// スライドパズルの盤面全体を表示するウィジェット
@@ -16,6 +17,10 @@ class PuzzleBoard extends StatelessWidget {
 
   /// タイルをフリックしたときの処理
   final ValueChanged<int>? onTileSwipe;
+
+  /// Pictureモードで使用する画像のアセットパス
+  /// nullの場合はNumberモードとして表示する
+  final String? pictureAssetPath;
 
   /// 盤面の最大サイズ
   final double maxBoardSize;
@@ -43,6 +48,7 @@ class PuzzleBoard extends StatelessWidget {
     required this.puzzleState,
     this.onTileTap,
     this.onTileSwipe,
+    this.pictureAssetPath,
     this.maxBoardSize = 500,
     this.spacing = 4,
     this.boardColor,
@@ -283,6 +289,23 @@ class PuzzleBoard extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final int number = board[index];
 
+                  // Pictureモードの場合
+                  if (pictureAssetPath != null) {
+                    return PictureTile(
+                      assetPath: pictureAssetPath!,
+                      number: number,
+                      boardSize: boardSize,
+                      size: tileSize,
+                      backgroundColor: tileColor,
+                      blankColor: blankColor,
+                      borderRadius: borderRadius,
+                      onTap: number == 0
+                          ? null
+                          : () => onTileTap?.call(index),
+                    );
+                  }
+
+                  // Numberモードの場合
                   return PuzzleTile(
                     number: number,
                     size: tileSize,
