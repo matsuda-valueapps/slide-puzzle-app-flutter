@@ -95,26 +95,15 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
   Widget _buildPictureList() {
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
-          child: Text(
-            'Choose your favorite picture',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ),
         Expanded(
           child: GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate:
                 const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.85,
+              crossAxisCount: 1,
+              crossAxisSpacing: 0,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.95,
             ),
             itemCount: widget.pictures.length,
             itemBuilder: (context, index) {
@@ -130,7 +119,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
             },
           ),
         ),
-        _buildSelectedPictureInfo(),
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
           child: GameButton(
@@ -227,11 +215,11 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
               ),
               child: Text(
                 picture.title,
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
@@ -239,52 +227,6 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 選択中の画像情報
-  Widget _buildSelectedPictureInfo() {
-    final picture = _selectedPicture;
-
-    if (picture == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 12,
-      ),
-      color: AppColors.cardBackground,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Selected: ${picture.title}',
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Credit: ${picture.credit}',
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          Text(
-            'License: ${picture.license}',
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
       ),
     );
   }

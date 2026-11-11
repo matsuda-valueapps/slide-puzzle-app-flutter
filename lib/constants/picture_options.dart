@@ -1,19 +1,145 @@
 import '../models/picture_option.dart';
 
 /// Pictureモードで選択できる画像の一覧。
-///
-/// 初期状態では画像ファイルが存在しないため、リストは空にしておく。
-/// 世界遺産の画像を追加するときは、
-/// assets/images/ に画像を配置したうえで、
-/// このリストに PictureOption を追加する。
 const List<PictureOption> pictureOptions = <PictureOption>[
-  // 画像を追加するときの記述例：
-  //
-  // PictureOption(
-  //   id: 'picture_001',
-  //   title: 'Mount Fuji',
-  //   assetPath: 'assets/images/picture_001.jpg',
-  //   credit: 'Photo by Example',
-  //   license: 'CC BY 4.0',
-  // ),
+  PictureOption(
+    id: 'picture_001',
+    title: 'Mont Saint-Michel',
+    assetPath: 'assets/images/picture_001.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_002',
+    title: 'Machu Picchu',
+    assetPath: 'assets/images/picture_002.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_003',
+    title: 'Taj Mahal',
+    assetPath: 'assets/images/picture_003.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_004',
+    title: 'Cologne Cathedral',
+    assetPath: 'assets/images/picture_004.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_005',
+    title: 'Colosseum',
+    assetPath: 'assets/images/picture_005.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_006',
+    title: 'Mount Fuji',
+    assetPath: 'assets/images/picture_006.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_007',
+    title: 'Statue of Liberty',
+    assetPath: 'assets/images/picture_007.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_008',
+    title: 'Sagrada Familia',
+    assetPath: 'assets/images/picture_008.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_009',
+    title: 'Acropolis of Athens',
+    assetPath: 'assets/images/picture_009.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_010',
+    title: 'Pyramids of Giza',
+    assetPath: 'assets/images/picture_010.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_011',
+    title: 'Palace of Versailles',
+    assetPath: 'assets/images/picture_011.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_012',
+    title: 'Chichen Itza',
+    assetPath: 'assets/images/picture_012.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_013',
+    title: 'Leaning Tower of Pisa',
+    assetPath: 'assets/images/picture_013.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_014',
+    title: 'Neuschwanstein Castle',
+    assetPath: 'assets/images/picture_014.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_015',
+    title: 'Big Ben',
+    assetPath: 'assets/images/picture_015.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_016',
+    title: 'Hagia Sophia',
+    assetPath: 'assets/images/picture_016.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_017',
+    title: 'Notre-Dame Cathedral of Paris',
+    assetPath: 'assets/images/picture_017.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_018',
+    title: 'Petra Archaeological Site',
+    assetPath: 'assets/images/picture_018.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_019',
+    title: 'Stonehenge',
+    assetPath: 'assets/images/picture_019.jpg',
+    credit: '',
+    license: '',
+  ),
+  PictureOption(
+    id: 'picture_020',
+    title: 'Sydney Opera House',
+    assetPath: 'assets/images/picture_020.jpg',
+    credit: '',
+    license: '',
+  ),
 ];

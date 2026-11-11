@@ -576,7 +576,8 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         return;
       }
 
-      // 完成画面へ結果を渡す
+      // ゲーム完成時の記録を必要に応じて渡す
+      // main.dartでは中央ダイアログを表示しない
       widget.onCompleted?.call(record);
     } catch (e) {
       debugPrint('Game completion error: $e');
@@ -670,7 +671,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                     if (_puzzleState.isPaused)
                       _buildPausedMessage(),
 
-                    // 完成時の表示
+                    // 完成時の結果表示
                     if (_puzzleState.isCompleted)
                       _buildCompletedMessage(),
                   ],
@@ -829,20 +830,19 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                   onTileTap: _handleTileTap,
                 ),
 
-              if (_puzzleState.isPaused ||
-                  _puzzleState.isCompleted)
+              // 一時停止中のみ盤面にオーバーレイを表示
+              // 完成時は画像を隠さない
+              if (_puzzleState.isPaused)
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
-                        _puzzleState.isCompleted
-                            ? 'Completed!'
-                            : 'Paused',
-                        style: const TextStyle(
+                        'Paused',
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -916,17 +916,95 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     );
   }
 
-  /// 完成時のメッセージ
+  /// 完成時の結果表示
+  ///
+  /// パズル盤面を隠さず、画面下部にコンパクトに表示する
   Widget _buildCompletedMessage() {
-    return const Padding(
-      padding: EdgeInsets.all(12),
-      child: Text(
-        'Congratulations!',
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.border,
         ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Congratulations!',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    'Moves',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${_puzzleState.moveCount}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                width: 1,
+                height: 36,
+                color: AppColors.border,
+              ),
+              Column(
+                children: [
+                  const Text(
+                    'Time',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  GameTimer(
+                    elapsedSeconds: _puzzleState.elapsedSeconds,
+                    fontSize: 18,
+                    iconSize: 16,
+                    showIcon: false,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: 150,
+            child: GameButton(
+              text: 'Home',
+              icon: Icons.home_outlined,
+              height: 44,
+              fontSize: 14,
+              onPressed: _handleBack,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -59,15 +59,19 @@ class PictureTile extends StatelessWidget {
     final int sourceRow = sourceIndex ~/ boardSize;
     final int sourceColumn = sourceIndex % boardSize;
 
+    // 元画像の表示位置を計算
+    // 左端・上端は -1、中央は 0、右端・下端は 1
+    final double alignmentX =
+        (2 * sourceColumn / (boardSize - 1)) - 1;
+
+    final double alignmentY =
+        (2 * sourceRow / (boardSize - 1)) - 1;
+
     return ClipRect(
       child: OverflowBox(
         alignment: Alignment(
-          boardSize == 1
-              ? 0
-              : (boardSize - 1) - sourceColumn * 2,
-          boardSize == 1
-              ? 0
-              : (boardSize - 1) - sourceRow * 2,
+          alignmentX,
+          alignmentY,
         ),
         minWidth: size * boardSize,
         maxWidth: size * boardSize,

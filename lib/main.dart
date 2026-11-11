@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'constants/picture_options.dart';
 import 'models/game_settings.dart';
-import 'models/puzzle_record.dart';
 import 'models/puzzle_save_data.dart';
 import 'pages/game_select_page.dart';
 import 'pages/home_page.dart';
@@ -114,7 +113,6 @@ class _MainPageState extends State<MainPage> {
             onBack: () {
               Navigator.of(context).pop();
             },
-            onCompleted: _showCompletionDialog,
           );
         },
       ),
@@ -206,61 +204,6 @@ class _MainPageState extends State<MainPage> {
       imageId: saveData.imageId,
       initialSaveData: saveData,
     );
-  }
-
-  // ゲームクリア時のダイアログ
-  void _showCompletionDialog(PuzzleRecord record) {
-    if (!mounted) return;
-
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Congratulations!'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('You completed the puzzle!'),
-              const SizedBox(height: 16),
-              Text(
-                'Time: ${_formatTime(record.bestTimeSeconds)}',
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Moves: ${record.bestMoveCount}',
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Home'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // 秒数を時間表示に変換する
-  String _formatTime(int seconds) {
-    final hours = seconds ~/ 3600;
-    final minutes = (seconds % 3600) ~/ 60;
-    final remainingSeconds = seconds % 60;
-
-    if (hours > 0) {
-      return '${hours.toString().padLeft(2, '0')}:'
-          '${minutes.toString().padLeft(2, '0')}:'
-          '${remainingSeconds.toString().padLeft(2, '0')}';
-    }
-
-    return '${minutes.toString().padLeft(2, '0')}:'
-        '${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   // Records画面（今後実装）
