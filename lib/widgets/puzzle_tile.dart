@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
+
 /// スライドパズルの各タイルを表示するウィジェット
 class PuzzleTile extends StatelessWidget {
   /// タイルに表示する数字
@@ -25,6 +27,9 @@ class PuzzleTile extends StatelessWidget {
   final double? fontSize;
 
   /// タイルの角丸の大きさ
+  ///
+  /// 既存コードとの互換性のため残している。
+  /// 実際の表示では角丸を使用しない。
   final double borderRadius;
 
   /// タイル同士の境界線の太さ
@@ -53,16 +58,19 @@ class PuzzleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 空白マスの色
+    // アプリ全体の背景色と同じ色にする
     final Color tileBlankColor =
-        blankColor ?? const Color(0xFFE5E7EB);
+        blankColor ?? AppColors.background;
 
     // 通常タイルの背景色
+    // 濃紺
     final Color tileBackgroundColor =
-        backgroundColor ?? const Color(0xFF3B82F6);
+        backgroundColor ?? AppColors.tileBackground;
 
     // 数字の文字色
+    // ゴールド
     final Color tileTextColor =
-        textColor ?? Colors.white;
+        textColor ?? AppColors.tileText;
 
     // 数字のサイズ
     final double tileFontSize =
@@ -73,6 +81,15 @@ class PuzzleTile extends StatelessWidget {
       return SizedBox(
         width: size,
         height: size,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: tileBlankColor,
+            border: Border.all(
+              color: Colors.black.withValues(alpha: 0.08),
+              width: borderWidth,
+            ),
+          ),
+        ),
       );
     }
 
@@ -83,14 +100,22 @@ class PuzzleTile extends StatelessWidget {
         color: isBlank
             ? tileBlankColor
             : tileBackgroundColor,
-        borderRadius: BorderRadius.circular(borderRadius),
+
+        // タイルの角丸をなくして完全な正方形にする
+        borderRadius: BorderRadius.zero,
+
         child: InkWell(
           onTap: isBlank ? null : onTap,
-          borderRadius: BorderRadius.circular(borderRadius),
+
+          // タップ時の反応範囲も角丸にしない
+          borderRadius: BorderRadius.zero,
+
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
+              // タイルの角丸をなくす
+              borderRadius: BorderRadius.zero,
+
               border: Border.all(
                 color: Colors.black.withValues(alpha: 0.08),
                 width: borderWidth,

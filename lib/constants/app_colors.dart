@@ -25,17 +25,26 @@ abstract final class AppColors {
   // メインカラー・アクセントカラー
   // =========================
 
+  /// シャンパンゴールド
+  /// 盤面の外枠などに使用
+  static const Color champagneGold = Color(0xFFC6A15B);
+
+  /// ゴールド
+  /// 数字・ボタンの文字・アイコンなどに使用
+  static const Color gold = Color(0xFFD4AF62);
+
   /// メインカラー
-  static const Color primary = Color(0xFF3B82F6);
+  /// アプリ全体のアクセントカラー
+  static const Color primary = champagneGold;
 
   /// メインカラーの明るい色
-  static const Color primaryLight = Color(0xFF60A5FA);
+  static const Color primaryLight = Color(0xFFE0C17D);
 
   /// メインカラーの暗い色
-  static const Color primaryDark = Color(0xFF2563EB);
+  static const Color primaryDark = Color(0xFFA9823F);
 
   /// アクセントカラー
-  static const Color accent = Color(0xFF22D3EE);
+  static const Color accent = gold;
 
   // =========================
   // 文字色
@@ -58,13 +67,15 @@ abstract final class AppColors {
   // =========================
 
   /// 通常タイルの背景色
-  static const Color tileBackground = Color(0xFF3B82F6);
+  /// Numberモード：濃紺
+  static const Color tileBackground = Color(0xFF14243B);
 
   /// タイルを選択したときの背景色
-  static const Color tileSelected = Color(0xFF60A5FA);
+  static const Color tileSelected = Color(0xFF263B57);
 
   /// タイルの文字色
-  static const Color tileText = Color(0xFFFFFFFF);
+  /// Numberモード：ゴールド
+  static const Color tileText = gold;
 
   /// 空白マスの背景色
   static const Color emptyTile = Color(0xFF0B1220);
@@ -77,7 +88,8 @@ abstract final class AppColors {
   // =========================
 
   /// 通常ボタン
-  static const Color buttonPrimary = Color(0xFF3B82F6);
+  /// 濃紺
+  static const Color buttonPrimary = Color(0xFF14243B);
 
   /// サブボタン
   static const Color buttonSecondary = Color(0xFF334155);
@@ -86,7 +98,12 @@ abstract final class AppColors {
   static const Color buttonDisabled = Color(0xFF475569);
 
   /// ボタン上の文字色
-  static const Color buttonText = Color(0xFFFFFFFF);
+  /// ゴールド
+  static const Color buttonText = gold;
+
+  /// ボタンの境界線
+  /// シャンパンゴールド
+  static const Color buttonBorder = champagneGold;
 
   // =========================
   // ステータスカラー

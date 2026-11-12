@@ -16,6 +16,9 @@ class GameButton extends StatelessWidget {
   /// ボタンの文字色
   final Color? textColor;
 
+  /// ボタンの枠線色
+  final Color? borderColor;
+
   /// ボタンに表示するアイコン
   final IconData? icon;
 
@@ -40,6 +43,7 @@ class GameButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor,
     this.textColor,
+    this.borderColor,
     this.icon,
     this.width,
     this.height = 52,
@@ -75,6 +79,12 @@ class GameButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(
               borderRadius,
             ),
+            side: borderColor != null
+                ? BorderSide(
+                    color: borderColor!,
+                    width: 1.5,
+                  )
+                : BorderSide.none,
           ),
         ),
         child: icon == null

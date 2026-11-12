@@ -25,6 +25,9 @@ class PictureTile extends StatelessWidget {
   final Color? blankColor;
 
   /// タイルの角丸の大きさ
+  ///
+  /// 既存コードとの互換性のため残している。
+  /// 実際の表示では角丸を使用しない。
   final double borderRadius;
 
   /// タイル同士の境界線の太さ
@@ -86,7 +89,8 @@ class PictureTile extends StatelessWidget {
             return Container(
               width: size * boardSize,
               height: size * boardSize,
-              color: backgroundColor ?? const Color(0xFF3B82F6),
+              color: backgroundColor ??
+                  const Color(0xFF3B82F6),
               alignment: Alignment.center,
               child: const Icon(
                 Icons.image_not_supported_outlined,
@@ -131,23 +135,41 @@ class PictureTile extends StatelessWidget {
         color: isBlank
             ? tileBlankColor
             : backgroundColor ?? Colors.transparent,
-        borderRadius: BorderRadius.circular(borderRadius),
-        clipBehavior: Clip.antiAlias,
+
+        // タイルの角丸をなくす
+        borderRadius: BorderRadius.zero,
+
+        // 四角形の範囲でクリップする
+        clipBehavior: Clip.hardEdge,
+
         child: InkWell(
           onTap: isBlank ? null : onTap,
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: Colors.black.withValues(alpha: 0.08),
-                width: borderWidth,
+
+          // タップ時の反応範囲も角丸にしない
+          borderRadius: BorderRadius.zero,
+
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 画像をタイルいっぱいに表示する
+              if (isBlank)
+                const SizedBox.expand()
+              else
+                _buildPicture(),
+
+              // 境界線を画像の上に重ねて描画する
+              // 画像の表示領域を縮めない
+              IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      width: borderWidth,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: isBlank
-                ? const SizedBox.expand()
-                : _buildPicture(),
+            ],
           ),
         ),
       ),

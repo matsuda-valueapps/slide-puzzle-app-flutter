@@ -138,6 +138,15 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     );
   }
 
+  /// 経過時間を mm:ss 形式に変換
+  String _formatElapsedTime(int elapsedSeconds) {
+    final int minutes = elapsedSeconds ~/ 60;
+    final int seconds = elapsedSeconds % 60;
+
+    return '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}';
+  }
+
   /// タイマーを開始
   void _startTimer() {
     _gameTimer?.cancel();
@@ -619,25 +628,25 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: AppColors.primary,
         elevation: 0,
+
+        // タイトルを画面中央に配置
+        centerTitle: true,
+
+        // 左端の戻る矢印
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: _handleBack,
         ),
+
+        // 中央のタイトル
         title: const Text(
           'Puzzle Game',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Home',
-            icon: const Icon(Icons.home_outlined),
-            onPressed: _handleBack,
-          ),
-        ],
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -695,7 +704,8 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.border,
+          color: AppColors.primary,
+          width: 1.5,
         ),
       ),
       child: Row(
@@ -706,8 +716,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
               const Text(
                 'Moves',
                 style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 6),
@@ -716,7 +727,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: AppColors.primary,
                 ),
               ),
             ],
@@ -724,23 +735,28 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
           Container(
             width: 1,
             height: 42,
-            color: AppColors.border,
+            color: AppColors.primary,
           ),
           Column(
             children: [
               const Text(
                 'Time',
                 style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 6),
-              GameTimer(
-                elapsedSeconds: _puzzleState.elapsedSeconds,
-                fontSize: 20,
-                iconSize: 18,
-                showIcon: false,
+              Text(
+                _formatElapsedTime(
+                  _puzzleState.elapsedSeconds,
+                ),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -825,7 +841,10 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                 PuzzleBoard(
                   puzzleState: _puzzleState,
                   maxBoardSize: boardDisplaySize,
-                  spacing: 4,
+
+                  // タイル間隔・盤面内側の余白を2.0に統一
+                  spacing: 2,
+
                   pictureAssetPath: pictureAssetPath,
                   onTileTap: _handleTileTap,
                 ),
@@ -872,6 +891,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                 : Icons.pause_rounded,
             height: 52,
             fontSize: 15,
+            backgroundColor: AppColors.buttonPrimary,
+            textColor: AppColors.primary,
+            borderColor: AppColors.primary,
             onPressed: _puzzleState.isCompleted
                 ? null
                 : () {
@@ -891,6 +913,8 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
             height: 52,
             fontSize: 15,
             backgroundColor: AppColors.buttonPrimary,
+            textColor: AppColors.primary,
+            borderColor: AppColors.primary,
             onPressed: _puzzleState.isPaused ||
                     _puzzleState.isCompleted
                 ? null

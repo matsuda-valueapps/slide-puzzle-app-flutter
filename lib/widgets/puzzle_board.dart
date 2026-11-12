@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
 import '../models/puzzle_state.dart';
 import '../services/puzzle_engine.dart';
 import 'picture_tile.dart';
@@ -25,7 +26,10 @@ class PuzzleBoard extends StatelessWidget {
   /// 盤面の最大サイズ
   final double maxBoardSize;
 
-  /// タイル同士の間隔
+  /// タイル同士の間隔・盤面内側の余白
+  ///
+  /// 既存コードとの互換性のため残している。
+  /// 実際の盤面では常に2.0を使用する。
   final double spacing;
 
   /// 盤面の背景色
@@ -41,7 +45,16 @@ class PuzzleBoard extends StatelessWidget {
   final Color? blankColor;
 
   /// タイルの角丸
+  ///
+  /// 既存コードとの互換性のため残している。
+  /// 実際のタイルには角丸を適用しない。
   final double borderRadius;
+
+  /// タイル間隔・盤面内側の余白
+  static const double _boardSpacing = 2.0;
+
+  /// 盤面外枠の線幅
+  static const double _boardBorderWidth = 3.0;
 
   const PuzzleBoard({
     super.key,
@@ -50,7 +63,7 @@ class PuzzleBoard extends StatelessWidget {
     this.onTileSwipe,
     this.pictureAssetPath,
     this.maxBoardSize = 500,
-    this.spacing = 4,
+    this.spacing = 2,
     this.boardColor,
     this.tileColor,
     this.textColor,
@@ -89,28 +102,26 @@ class PuzzleBoard extends StatelessWidget {
           maxBoardSize,
         );
 
-        final double tileSize =
-            (boardWidth - spacing * (boardSize - 1)) /
-                boardSize;
-
         // 盤面の内側のサイズ
+        // 左右・上下の余白2.0を差し引く
         final double innerBoardWidth =
-            boardWidth - spacing * 2;
+            boardWidth - _boardSpacing * 2;
 
         // タイル1マスの実際のサイズ
+        // 盤面内側の余白とタイル間隔を差し引いて計算
         final double actualTileSize =
             (innerBoardWidth -
-                    spacing * (boardSize - 1)) /
+                    _boardSpacing * (boardSize - 1)) /
                 boardSize;
 
         // タイル間隔を含めた1マスの幅
         final double tileStride =
-            actualTileSize + spacing;
+            actualTileSize + _boardSpacing;
 
         // フリック開始位置を盤面インデックスに変換
         int? getTileIndex(Offset position) {
-          final double x = position.dx - spacing;
-          final double y = position.dy - spacing;
+          final double x = position.dx - _boardSpacing;
+          final double y = position.dy - _boardSpacing;
 
           if (x < 0 ||
               y < 0 ||
@@ -139,8 +150,8 @@ class PuzzleBoard extends StatelessWidget {
           final double positionInCellY =
               y - row * tileStride;
 
-          if (positionInCellX > actualTileSize ||
-              positionInCellY > actualTileSize) {
+          if (positionInCellX >= actualTileSize ||
+              positionInCellY >= actualTileSize) {
             return null;
           }
 
@@ -267,11 +278,19 @@ class PuzzleBoard extends StatelessWidget {
             child: Container(
               width: boardWidth,
               height: boardWidth,
-              padding: EdgeInsets.all(spacing),
+              padding: const EdgeInsets.all(_boardSpacing),
               decoration: BoxDecoration(
-                color: boardColor ?? Colors.transparent,
-                borderRadius: BorderRadius.circular(
-                  borderRadius,
+                color: boardColor ??
+                    AppColors.cardBackground,
+
+                // 盤面外枠を完全な四角形にする
+                borderRadius: BorderRadius.zero,
+
+                // シャンパンゴールドの外枠
+                // Numberモード・Pictureモード共通
+                border: Border.all(
+                  color: AppColors.primary,
+                  width: _boardBorderWidth,
                 ),
               ),
               child: GridView.builder(
@@ -281,8 +300,8 @@ class PuzzleBoard extends StatelessWidget {
                 gridDelegate:
                     SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: boardSize,
-                  crossAxisSpacing: spacing,
-                  mainAxisSpacing: spacing,
+                  crossAxisSpacing: _boardSpacing,
+                  mainAxisSpacing: _boardSpacing,
                   childAspectRatio: 1,
                 ),
                 itemCount: board.length,
@@ -295,7 +314,7 @@ class PuzzleBoard extends StatelessWidget {
                       assetPath: pictureAssetPath!,
                       number: number,
                       boardSize: boardSize,
-                      size: tileSize,
+                      size: actualTileSize,
                       backgroundColor: tileColor,
                       blankColor: blankColor,
                       borderRadius: borderRadius,
@@ -308,7 +327,7 @@ class PuzzleBoard extends StatelessWidget {
                   // Numberモードの場合
                   return PuzzleTile(
                     number: number,
-                    size: tileSize,
+                    size: actualTileSize,
                     backgroundColor: tileColor,
                     textColor: textColor,
                     blankColor: blankColor,
