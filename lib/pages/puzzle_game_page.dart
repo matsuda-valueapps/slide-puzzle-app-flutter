@@ -844,6 +844,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                   // タイル間隔・盤面内側の余白を2.0に統一
                   spacing: 2,
 
+                  // タイル間の隙間を画面背景色に統一
+                  boardColor: AppColors.background,
+
                   pictureAssetPath: pictureAssetPath,
                   onTileTap: _handleTileTap,
                 ),
