@@ -74,16 +74,19 @@ class _GameSelectPageState extends State<GameSelectPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: AppColors.primary,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
           'Game Settings',
           style: TextStyle(
             fontWeight: FontWeight.bold,
+            color: AppColors.primary,
           ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: AppColors.primary,
           onPressed: widget.onBack ??
               () => Navigator.of(context).maybePop(),
         ),
@@ -100,7 +103,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Game Type
-                  _buildSectionTitle('Game Type'),
+                  _buildSectionTitle('【Game Type】'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -136,7 +139,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
                   const SizedBox(height: 32),
 
                   // Board Size
-                  _buildSectionTitle('Board Size'),
+                  _buildSectionTitle('【Board Size】'),
                   const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
@@ -188,7 +191,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
                     const SizedBox(height: 32),
 
                     // Pattern
-                    _buildSectionTitle('Pattern'),
+                    _buildSectionTitle('【Pattern】'),
                     const SizedBox(height: 12),
                     LayoutBuilder(
                       builder: (context, constraints) {
@@ -260,7 +263,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
   }) {
     return Material(
       color: isSelected
-          ? AppColors.primary
+          ? AppColors.primaryLight
           : AppColors.cardBackground,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
@@ -271,10 +274,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.border,
-              width: isSelected ? 2 : 1,
+              color: AppColors.primary,
+              width: 2,
             ),
           ),
           alignment: Alignment.center,
@@ -283,10 +284,10 @@ class _GameSelectPageState extends State<GameSelectPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isSelected) ...[
-                Icon(
+                const Icon(
                   Icons.check,
                   size: 18,
-                  color: AppColors.buttonText,
+                  color: Colors.white,
                 ),
                 const SizedBox(width: 6),
               ],
@@ -294,12 +295,10 @@ class _GameSelectPageState extends State<GameSelectPage> {
                 child: Text(
                   '$size×$size',
                   maxLines: 1,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: isSelected
-                        ? AppColors.buttonText
-                        : AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -318,7 +317,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
   }) {
     return Material(
       color: isSelected
-          ? AppColors.primary
+          ? AppColors.primaryLight
           : AppColors.cardBackground,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
@@ -328,10 +327,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.border,
-              width: isSelected ? 2 : 1,
+              color: AppColors.primary,
+              width: 2,
             ),
           ),
           alignment: Alignment.center,
@@ -340,10 +337,10 @@ class _GameSelectPageState extends State<GameSelectPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isSelected) ...[
-                Icon(
+                const Icon(
                   Icons.check,
                   size: 18,
-                  color: AppColors.buttonText,
+                  color: Colors.white,
                 ),
                 const SizedBox(width: 6),
               ],
@@ -352,12 +349,10 @@ class _GameSelectPageState extends State<GameSelectPage> {
                   _patternLabel(pattern),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: isSelected
-                        ? AppColors.buttonText
-                        : AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -376,10 +371,11 @@ class _GameSelectPageState extends State<GameSelectPage> {
       children: [
         Text(
           '$_selectedBoardSize×$_selectedBoardSize Preview',
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 16),
@@ -389,8 +385,9 @@ class _GameSelectPageState extends State<GameSelectPage> {
                 .clamp(0.0, 320.0)
                 .toDouble();
 
-            final tileSpacing = _selectedBoardSize >= 6 ? 2.0 : 3.0;
-            final boardPadding = _selectedBoardSize >= 6 ? 4.0 : 6.0;
+            // ゲームプレイ画面と同じ間隔・内側余白
+            const double tileSpacing = 2.0;
+            const double boardPadding = 2.0;
 
             final tileFontSize =
                 (_selectedBoardSize <= 3 ? 30.0 : 26.0) /
@@ -400,10 +397,10 @@ class _GameSelectPageState extends State<GameSelectPage> {
               child: Container(
                 width: boardWidth,
                 height: boardWidth,
-                padding: EdgeInsets.all(boardPadding),
+                padding: const EdgeInsets.all(boardPadding),
                 decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(14),
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.zero,
                   border: Border.all(
                     color: AppColors.primary,
                     width: 3,
@@ -428,15 +425,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
                       decoration: BoxDecoration(
                         color: isBlank
                             ? AppColors.background
-                            : AppColors.primary,
-                        borderRadius: BorderRadius.circular(
-                          _selectedBoardSize >= 6 ? 3 : 6,
-                        ),
-                        border: Border.all(
-                          color: isBlank
-                              ? AppColors.border
-                              : AppColors.primary,
-                        ),
+                            : AppColors.cardBackground,
+                        borderRadius: BorderRadius.zero,
                       ),
                       alignment: Alignment.center,
                       child: isBlank
@@ -448,7 +438,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
                                 style: TextStyle(
                                   fontSize: tileFontSize,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.buttonText,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ),
@@ -462,10 +452,11 @@ class _GameSelectPageState extends State<GameSelectPage> {
         const SizedBox(height: 10),
         Text(
           _patternLabel(_selectedPattern),
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -476,10 +467,11 @@ class _GameSelectPageState extends State<GameSelectPage> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
+      textAlign: TextAlign.center,
       style: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
+        color: AppColors.primary,
       ),
     );
   }
@@ -507,10 +499,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.border,
-              width: isSelected ? 2 : 1,
+              color: AppColors.primary,
+              width: 2,
             ),
           ),
           child: Column(
@@ -519,8 +509,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
                 icon,
                 size: 36,
                 color: isSelected
-                    ? AppColors.primary
-                    : AppColors.textSecondary,
+                    ? Colors.white
+                    : AppColors.primary,
               ),
               const SizedBox(height: 10),
               Text(
@@ -528,7 +518,7 @@ class _GameSelectPageState extends State<GameSelectPage> {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: Colors.white,
                 ),
               ),
             ],
