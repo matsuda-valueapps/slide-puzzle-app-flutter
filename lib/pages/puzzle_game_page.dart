@@ -13,7 +13,6 @@ import '../services/puzzle_engine.dart';
 import '../services/puzzle_save_service.dart';
 import '../services/record_service.dart';
 import '../widgets/game_button.dart';
-import '../widgets/game_timer.dart';
 import '../widgets/puzzle_board.dart';
 
 /// パズルゲーム画面
@@ -593,7 +592,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     }
   }
 
-  /// ホーム画面などへ戻る
+  /// AppBarの戻るボタンで前の画面へ戻る
   Future<void> _handleBack() async {
     await _saveGame();
 
@@ -943,6 +942,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   /// 完成時の結果表示
   ///
   /// パズル盤面を隠さず、画面下部にコンパクトに表示する
+  /// Homeボタンは設けず、Congratulationsと結果のみを表示する
   Widget _buildCompletedMessage() {
     return Container(
       width: double.infinity,
@@ -954,14 +954,15 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.border,
+          color: AppColors.primary,
+          width: 1.5,
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            'Congratulations!',
+            'Congratulations！',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -977,17 +978,18 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                   const Text(
                     'Moves',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${_puzzleState.moveCount}',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -995,38 +997,32 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
               Container(
                 width: 1,
                 height: 36,
-                color: AppColors.border,
+                color: AppColors.primary,
               ),
               Column(
                 children: [
                   const Text(
                     'Time',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  GameTimer(
-                    elapsedSeconds: _puzzleState.elapsedSeconds,
-                    fontSize: 18,
-                    iconSize: 16,
-                    showIcon: false,
+                  Text(
+                    _formatElapsedTime(
+                      _puzzleState.elapsedSeconds,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ],
               ),
             ],
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: 150,
-            child: GameButton(
-              text: 'Home',
-              icon: Icons.home_outlined,
-              height: 44,
-              fontSize: 14,
-              onPressed: _handleBack,
-            ),
           ),
         ],
       ),
