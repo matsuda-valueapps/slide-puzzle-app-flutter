@@ -240,9 +240,10 @@ class _MainPageState extends State<MainPage> {
 
                 // 説明文
                 const Text(
-                  'Which game to continue？',
+                  'Which game to continue?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                     fontSize: 16,
                     height: 1.5,

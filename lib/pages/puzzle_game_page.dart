@@ -530,9 +530,10 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Current progress will be reset.\nDo you want to continue?',
+                  'Reset and shuffle?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                     fontSize: 16,
                     height: 1.5,
