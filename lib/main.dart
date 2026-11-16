@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'constants/app_colors.dart';
 import 'constants/picture_options.dart';
 import 'models/game_settings.dart';
 import 'models/puzzle_save_data.dart';
@@ -139,35 +140,7 @@ class _MainPageState extends State<MainPage> {
 
       // NumberとPictureの両方に保存データがある場合
       if (numberSave != null && pictureSave != null) {
-        final selectedType = await showDialog<GameType>(
-          context: context,
-          builder: (dialogContext) {
-            return AlertDialog(
-              title: const Text('Continue Game'),
-              content: const Text(
-                'Which game would you like to continue?',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop(
-                      GameType.number,
-                    );
-                  },
-                  child: const Text('Number'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop(
-                      GameType.picture,
-                    );
-                  },
-                  child: const Text('Picture'),
-                ),
-              ],
-            );
-          },
-        );
+        final selectedType = await _showContinueGameDialog();
 
         if (!mounted || selectedType == null) return;
 
@@ -195,6 +168,151 @@ class _MainPageState extends State<MainPage> {
 
       _showMessage('Failed to load saved game.');
     }
+  }
+
+  // Continue Gameダイアログ
+  Future<GameType?> _showContinueGameDialog() {
+    return showDialog<GameType>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: AppColors.primary,
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // タイトル
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.history_rounded,
+                      color: AppColors.primary,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        'Continue Game',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // ゴールドの区切り線
+                Container(
+                  height: 1,
+                  width: double.infinity,
+                  color: AppColors.primary.withValues(
+                    alpha: 0.7,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // 説明文
+                const Text(
+                  'Which game to continue？',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                // Number / Picture 選択ボタン
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildContinueButton(
+                        context: dialogContext,
+                        text: 'Number',
+                        gameType: GameType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildContinueButton(
+                        context: dialogContext,
+                        text: 'Picture',
+                        gameType: GameType.picture,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Continue Gameの選択ボタン
+  Widget _buildContinueButton({
+    required BuildContext context,
+    required String text,
+    required GameType gameType,
+  }) {
+    return OutlinedButton(
+      onPressed: () {
+        Navigator.of(context).pop(gameType);
+      },
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: gameType == GameType.number
+            ? AppColors.primaryLight
+            : AppColors.cardBackground,
+        side: const BorderSide(
+          color: AppColors.primary,
+          width: 2,
+        ),
+        padding: const EdgeInsets.symmetric(
+          vertical: 13,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   // 保存データを使ってゲームを再開する
