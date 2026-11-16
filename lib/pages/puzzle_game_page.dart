@@ -530,7 +530,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Reset and shuffle?',
+                  'Moves and time will reset.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
