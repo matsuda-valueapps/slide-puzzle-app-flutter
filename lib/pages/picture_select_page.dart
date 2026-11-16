@@ -96,25 +96,37 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
     return Column(
       children: [
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.95,
-            ),
-            itemCount: widget.pictures.length,
-            itemBuilder: (context, index) {
-              final picture = widget.pictures[index];
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // GridViewの左右の余白（16 × 2）を差し引く
+              // 画像の横幅と高さを同じにして正方形にする
+              final double imageSize =
+                  constraints.maxWidth - 32;
 
-              final bool isSelected =
-                  picture.id == _selectedImageId;
+              return GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate:
+                    SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  crossAxisSpacing: 0,
+                  mainAxisSpacing: 16,
 
-              return _buildPictureCard(
-                picture: picture,
-                isSelected: isSelected,
+                  // 正方形の画像 + 画像名の表示領域
+                  mainAxisExtent: imageSize + 52,
+                ),
+                itemCount: widget.pictures.length,
+                itemBuilder: (context, index) {
+                  final picture = widget.pictures[index];
+
+                  final bool isSelected =
+                      picture.id == _selectedImageId;
+
+                  return _buildPictureCard(
+                    picture: picture,
+                    isSelected: isSelected,
+                    imageSize: imageSize,
+                  );
+                },
               );
             },
           ),
@@ -139,6 +151,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
   Widget _buildPictureCard({
     required PictureOption picture,
     required bool isSelected,
+    required double imageSize,
   }) {
     return GestureDetector(
       onTap: () {
@@ -146,30 +159,33 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
           _selectedImageId = picture.id;
         });
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.border,
-            width: isSelected ? 3 : 1,
-          ),
-          boxShadow: [
-            if (isSelected)
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 画像部分（正方形）
+          SizedBox(
+            width: imageSize,
+            height: imageSize,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.border,
+                  width: isSelected ? 3 : 1,
+                ),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: AppColors.primary.withValues(
+                        alpha: 0.15,
+                      ),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                ],
               ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
+              clipBehavior: Clip.hardEdge,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -188,6 +204,8 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
                       );
                     },
                   ),
+
+                  // 選択中のチェックマーク
                   if (isSelected)
                     Positioned(
                       top: 8,
@@ -208,25 +226,28 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 10,
-              ),
-              child: Text(
-                picture.title,
-                textAlign: TextAlign.left,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+          ),
+
+          // 画像名（画像の外側に表示）
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              top: 10,
+            ),
+            child: Text(
+              picture.title,
+              textAlign: TextAlign.left,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
