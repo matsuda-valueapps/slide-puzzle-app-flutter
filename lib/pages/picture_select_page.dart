@@ -69,12 +69,17 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: AppColors.primary,
         elevation: 0,
+
+        // タイトルを画面中央に配置
+        centerTitle: true,
+
         title: const Text(
           'Select Picture',
           style: TextStyle(
             fontWeight: FontWeight.bold,
+            color: AppColors.primary,
           ),
         ),
         leading: IconButton(
@@ -132,7 +137,7 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
           child: GameButton(
             text: 'Start Game',
             icon: Icons.play_arrow_rounded,
@@ -237,13 +242,15 @@ class _PictureSelectPageState extends State<PictureSelectPage> {
             ),
             child: Text(
               picture.title,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.textPrimary,
               ),
             ),
           ),
