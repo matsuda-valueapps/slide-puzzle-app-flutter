@@ -8,6 +8,7 @@ import 'pages/game_select_page.dart';
 import 'pages/home_page.dart';
 import 'pages/picture_select_page.dart';
 import 'pages/puzzle_game_page.dart';
+import 'pages/records_page.dart';
 import 'services/puzzle_save_service.dart';
 
 void main() {
@@ -325,9 +326,15 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // Records画面（今後実装）
+  // Records画面を開く
   void _openRecords() {
-    _showMessage('Records screen is coming soon.');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const RecordsPage();
+        },
+      ),
+    );
   }
 
   // Settings画面（今後実装）
