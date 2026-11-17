@@ -784,10 +784,6 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
                     const SizedBox(height: 20),
 
-                    // 一時停止中の表示
-                    if (_puzzleState.isPaused)
-                      _buildPausedMessage(),
-
                     // 完成時の結果表示
                     if (_puzzleState.isCompleted)
                       _buildCompletedMessage(),
@@ -1036,21 +1032,6 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     );
   }
 
-  /// 一時停止中のメッセージ
-  Widget _buildPausedMessage() {
-    return const Padding(
-      padding: EdgeInsets.all(12),
-      child: Text(
-        'Game Paused',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: AppColors.textSecondary,
-        ),
-      ),
-    );
-  }
-
   /// 完成時の結果表示
   ///
   /// パズル盤面を隠さず、画面下部にコンパクトに表示する
@@ -1074,7 +1055,7 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            'Congratulations！',
+            'Congratulations!',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
