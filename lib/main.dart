@@ -9,6 +9,7 @@ import 'pages/home_page.dart';
 import 'pages/picture_select_page.dart';
 import 'pages/puzzle_game_page.dart';
 import 'pages/records_page.dart';
+import 'pages/settings_page.dart';
 import 'services/puzzle_save_service.dart';
 
 void main() {
@@ -337,9 +338,15 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // Settings画面（今後実装）
+  // Settings画面を開く
   void _openSettings() {
-    _showMessage('Settings screen is coming soon.');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const SettingsPage();
+        },
+      ),
+    );
   }
 
   // メッセージを表示する

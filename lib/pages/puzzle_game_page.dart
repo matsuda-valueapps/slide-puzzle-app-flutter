@@ -12,6 +12,7 @@ import '../models/puzzle_record.dart';
 import '../services/puzzle_engine.dart';
 import '../services/puzzle_save_service.dart';
 import '../services/record_service.dart';
+import '../services/sound_service.dart';
 import '../widgets/game_button.dart';
 import '../widgets/puzzle_board.dart';
 
@@ -49,6 +50,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   final PuzzleSaveService _saveService = PuzzleSaveService();
   final RecordService _recordService = RecordService();
 
+  /// アプリ専用の効果音を管理するサービス
+  final SoundService _soundService = SoundService();
+
   late PuzzleState _puzzleState;
 
   Timer? _gameTimer;
@@ -83,6 +87,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   @override
   void initState() {
     super.initState();
+
+    // アプリ専用の効果音サービスを初期化
+    unawaited(_soundService.initialize());
 
     _initializeGame();
   }
@@ -411,6 +418,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
       return;
     }
 
+    // 正常に移動できた場合だけアプリ専用の効果音を再生
+    unawaited(_soundService.playTileMove());
+
     setState(() {
       _puzzleState = _puzzleState.copyWith(
         board: newBoard,
@@ -726,6 +736,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     if (!_puzzleState.isCompleted) {
       _saveGame();
     }
+
+    // 音声プレイヤーを解放
+    unawaited(_soundService.dispose());
 
     super.dispose();
   }
