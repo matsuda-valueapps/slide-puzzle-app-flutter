@@ -146,9 +146,9 @@ class VibrationService {
     _isPlayingCompletionVibration = true;
 
     try {
-      // 約100ミリ秒間隔で18回振動する
-      // 合計約1.8秒の振動演出
-      for (int i = 0; i < 18; i++) {
+      // 約100ミリ秒間隔で25回振動する
+      // 合計約2.5秒の振動演出
+      for (int i = 0; i < 25; i++) {
         // OFF・解放済みになった場合は中断
         if (!_vibrationEnabled || _isDisposed) {
           break;
