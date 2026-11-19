@@ -16,6 +16,7 @@ import '../services/sound_service.dart';
 import '../services/vibration_service.dart';
 import '../widgets/game_button.dart';
 import '../widgets/puzzle_board.dart';
+import '../widgets/gold_confetti_animation.dart';
 
 /// パズルゲーム画面
 class PuzzleGamePage extends StatefulWidget {
@@ -63,6 +64,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
   bool _isSaving = false;
   bool _isCompleting = false;
+
+  /// パズル完成時の金色の紙吹雪を表示するかどうか
+  bool _showGoldConfetti = false;
 
   /// フリック開始位置
   Offset? _swipeStartPosition;
@@ -692,6 +696,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
         isCompleted: true,
         isPaused: false,
       );
+
+      // 金色の紙吹雪アニメーションを開始
+      _showGoldConfetti = true;
     });
 
     final PuzzleRecord record = PuzzleRecord(
@@ -1007,6 +1014,20 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+
+              // パズル完成時に盤面の範囲内だけで金色の紙吹雪を表示
+              if (_showGoldConfetti)
+                Positioned.fill(
+                  child: GoldConfettiAnimation(
+                    onCompleted: () {
+                      if (!mounted) return;
+
+                      setState(() {
+                        _showGoldConfetti = false;
+                      });
+                    },
                   ),
                 ),
             ],

@@ -115,7 +115,9 @@ class VibrationService {
 
   /// パズル完成時の振動演出
   ///
-  /// 約5秒間、短い振動を繰り返す。
+  /// 約1.8秒間、短い振動を細かく繰り返す。
+  ///
+  /// 「ブルルル〜ン！」という連続的な振動を目指す。
   ///
   /// Vibration がOFFの場合は振動しない。
   /// 演出中にVibrationがOFFになった場合は中断する。
@@ -144,8 +146,9 @@ class VibrationService {
     _isPlayingCompletionVibration = true;
 
     try {
-      // 約500ミリ秒間隔で10回振動する
-      for (int i = 0; i < 10; i++) {
+      // 約100ミリ秒間隔で18回振動する
+      // 合計約1.8秒の振動演出
+      for (int i = 0; i < 18; i++) {
         // OFF・解放済みになった場合は中断
         if (!_vibrationEnabled || _isDisposed) {
           break;
@@ -154,9 +157,9 @@ class VibrationService {
         // 短い振動を実行
         await HapticFeedback.lightImpact();
 
-        // 次の振動まで少し間隔を空ける
+        // 次の振動まで約100ミリ秒間隔を空ける
         await Future.delayed(
-          const Duration(milliseconds: 500),
+          const Duration(milliseconds: 100),
         );
       }
     } catch (e) {
