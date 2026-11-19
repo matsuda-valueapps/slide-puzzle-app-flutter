@@ -669,6 +669,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
     _isCompleting = true;
 
+    // パズル完成時のファンファーレを再生
+    unawaited(_soundService.playPuzzleComplete());
+
     _gameTimer?.cancel();
 
     setState(() {

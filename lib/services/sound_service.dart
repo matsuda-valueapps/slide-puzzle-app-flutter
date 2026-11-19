@@ -10,12 +10,19 @@ class SoundService {
   final AppSettingsService _settingsService =
       AppSettingsService();
 
-  /// 音声プレイヤー
+  /// タイル移動用の音声プレイヤー
   final AudioPlayer _audioPlayer = AudioPlayer();
+
+  /// パズル完成用の音声プレイヤー
+  final AudioPlayer _completionAudioPlayer = AudioPlayer();
 
   /// タイル移動時の効果音ファイル
   static const String _tileMoveSoundPath =
       'audio/tile_move.wav';
+
+  /// パズル完成時の効果音ファイル
+  static const String _puzzleCompleteSoundPath =
+      'audio/puzzle_complete.wav';
 
   /// Sound Effects が有効かどうか
   bool _soundEffectsEnabled = false;
@@ -70,8 +77,17 @@ class SoundService {
       _soundEffectsEnabled =
           settings.soundEffectsEnabled;
 
-      // 低遅延モードに設定
+      // タイル移動音を低遅延モードに設定
       await _audioPlayer.setPlayerMode(
+        PlayerMode.lowLatency,
+      );
+
+      if (_isDisposed) {
+        return;
+      }
+
+      // パズル完成音は通常のメディアモードに設定
+      await _completionAudioPlayer.setPlayerMode(
         PlayerMode.lowLatency,
       );
 
@@ -82,10 +98,11 @@ class SoundService {
       _isInitialized = true;
     } catch (e) {
       _soundEffectsEnabled = false;
-
       _isInitialized = false;
 
-      debugPrint('Sound service initialization error: $e');
+      debugPrint(
+        'Sound service initialization error: $e',
+      );
     }
   }
 
@@ -134,7 +151,48 @@ class SoundService {
         AssetSource(_tileMoveSoundPath),
       );
     } catch (e) {
-      debugPrint('Tile move sound playback error: $e');
+      debugPrint(
+        'Tile move sound playback error: $e',
+      );
+    }
+  }
+
+  /// パズル完成時の効果音を再生する
+  ///
+  /// Sound Effects がOFFの場合は再生しない。
+  Future<void> playPuzzleComplete() async {
+    if (_isDisposed) {
+      return;
+    }
+
+    // 初期化されていない場合は初期化する
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    // 初期化失敗・OFF・解放済みの場合は再生しない
+    if (!_isInitialized ||
+        !_soundEffectsEnabled ||
+        _isDisposed) {
+      return;
+    }
+
+    try {
+      // 前の完成音が再生中の場合は停止
+      await _completionAudioPlayer.stop();
+
+      if (_isDisposed || !_soundEffectsEnabled) {
+        return;
+      }
+
+      // パズル完成音を再生
+      await _completionAudioPlayer.play(
+        AssetSource(_puzzleCompleteSoundPath),
+      );
+    } catch (e) {
+      debugPrint(
+        'Puzzle completion sound playback error: $e',
+      );
     }
   }
 
@@ -153,7 +211,17 @@ class SoundService {
     try {
       await _audioPlayer.dispose();
     } catch (e) {
-      debugPrint('Sound service disposal error: $e');
+      debugPrint(
+        'Tile move sound disposal error: $e',
+      );
+    }
+
+    try {
+      await _completionAudioPlayer.dispose();
+    } catch (e) {
+      debugPrint(
+        'Completion sound disposal error: $e',
+      );
     }
   }
 }
