@@ -13,6 +13,7 @@ import '../services/puzzle_engine.dart';
 import '../services/puzzle_save_service.dart';
 import '../services/record_service.dart';
 import '../services/sound_service.dart';
+import '../services/vibration_service.dart';
 import '../widgets/game_button.dart';
 import '../widgets/puzzle_board.dart';
 
@@ -53,6 +54,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
   /// アプリ専用の効果音を管理するサービス
   final SoundService _soundService = SoundService();
 
+  /// タイル移動時の振動を管理するサービス
+  final VibrationService _vibrationService = VibrationService();
+
   late PuzzleState _puzzleState;
 
   Timer? _gameTimer;
@@ -90,6 +94,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
     // アプリ専用の効果音サービスを初期化
     unawaited(_soundService.initialize());
+
+    // アプリ専用の振動サービスを初期化
+    unawaited(_vibrationService.initialize());
 
     _initializeGame();
   }
@@ -421,6 +428,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
     // 正常に移動できた場合だけアプリ専用の効果音を再生
     unawaited(_soundService.playTileMove());
 
+    // 正常に移動できた場合だけ短い振動を実行
+    unawaited(_vibrationService.playTileMove());
+
     setState(() {
       _puzzleState = _puzzleState.copyWith(
         board: newBoard,
@@ -742,6 +752,9 @@ class _PuzzleGamePageState extends State<PuzzleGamePage> {
 
     // 音声プレイヤーを解放
     unawaited(_soundService.dispose());
+
+    // 振動サービスを解放
+    unawaited(_vibrationService.dispose());
 
     super.dispose();
   }
