@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import '../models/app_settings.dart';
@@ -20,6 +22,9 @@ class VibrationService {
 
   /// 初期化処理の重複を防ぐ
   Future<void>? _initializationFuture;
+
+  /// パズル完成時の振動演出が実行中かどうか
+  bool _isPlayingCompletionVibration = false;
 
   /// Vibration の現在の状態
   bool get isVibrationEnabled => _vibrationEnabled;
@@ -76,6 +81,9 @@ class VibrationService {
     }
 
     _vibrationEnabled = enabled;
+
+    // Vibration がOFFになった場合、
+    // 実行中の完成演出は次の振動から中断する
   }
 
   /// タイル移動時の短い振動
@@ -102,6 +110,59 @@ class VibrationService {
       await HapticFeedback.lightImpact();
     } catch (e) {
       // 振動に対応していない端末でもゲームを継続できるようにする
+    }
+  }
+
+  /// パズル完成時の振動演出
+  ///
+  /// 約5秒間、短い振動を繰り返す。
+  ///
+  /// Vibration がOFFの場合は振動しない。
+  /// 演出中にVibrationがOFFになった場合は中断する。
+  Future<void> playPuzzleComplete() async {
+    if (_isDisposed) {
+      return;
+    }
+
+    // 初期化されていない場合は初期化する
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    // 初期化失敗・OFF・解放済みの場合は振動しない
+    if (!_isInitialized ||
+        !_vibrationEnabled ||
+        _isDisposed) {
+      return;
+    }
+
+    // 完成時の振動演出が実行中なら重複実行しない
+    if (_isPlayingCompletionVibration) {
+      return;
+    }
+
+    _isPlayingCompletionVibration = true;
+
+    try {
+      // 約500ミリ秒間隔で10回振動する
+      for (int i = 0; i < 10; i++) {
+        // OFF・解放済みになった場合は中断
+        if (!_vibrationEnabled || _isDisposed) {
+          break;
+        }
+
+        // 短い振動を実行
+        await HapticFeedback.lightImpact();
+
+        // 次の振動まで少し間隔を空ける
+        await Future.delayed(
+          const Duration(milliseconds: 500),
+        );
+      }
+    } catch (e) {
+      // 振動に対応していない端末でもゲームを継続できるようにする
+    } finally {
+      _isPlayingCompletionVibration = false;
     }
   }
 
