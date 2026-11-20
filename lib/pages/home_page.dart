@@ -28,7 +28,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // Game Settings画面と同じ背景色
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -51,10 +52,10 @@ class HomePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // スライドパズルロゴ
+                          // 写真を9分割したスライドパズルロゴ
                           const _SlidePuzzleLogo(),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 28),
 
                           // アプリタイトル
                           const Text(
@@ -63,25 +64,13 @@ class HomePage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E3A8A),
+                              color: AppColors.primary,
                               letterSpacing: 0.3,
                             ),
                           ),
 
-                          const SizedBox(height: 12),
-
-                          // サブタイトル
-                          const Text(
-                            'Challenge Your Mind',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF475569),
-                            ),
-                          ),
-
-                          const SizedBox(height: 56),
+                          // アプリ名とボタンの間隔を縮小
+                          const SizedBox(height: 32),
 
                           // New Game
                           GameButton(
@@ -89,6 +78,9 @@ class HomePage extends StatelessWidget {
                             icon: Icons.play_arrow_rounded,
                             height: 58,
                             fontSize: 18,
+                            backgroundColor: AppColors.buttonPrimary,
+                            textColor: AppColors.primary,
+                            borderColor: AppColors.primary,
                             onPressed: onNewGame,
                           ),
 
@@ -101,6 +93,8 @@ class HomePage extends StatelessWidget {
                             height: 58,
                             fontSize: 18,
                             backgroundColor: AppColors.buttonPrimary,
+                            textColor: AppColors.primary,
+                            borderColor: AppColors.primary,
                             onPressed: onContinue,
                           ),
 
@@ -113,6 +107,8 @@ class HomePage extends StatelessWidget {
                             height: 58,
                             fontSize: 18,
                             backgroundColor: AppColors.buttonPrimary,
+                            textColor: AppColors.primary,
+                            borderColor: AppColors.primary,
                             onPressed: onRecords,
                           ),
 
@@ -125,6 +121,8 @@ class HomePage extends StatelessWidget {
                             height: 58,
                             fontSize: 18,
                             backgroundColor: AppColors.buttonPrimary,
+                            textColor: AppColors.primary,
+                            borderColor: AppColors.primary,
                             onPressed: onSettings,
                           ),
 
@@ -154,81 +152,97 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// 3×3のスライドパズルをイメージしたロゴ
+/// 写真を3×3に分割したスライドパズルロゴ
+///
+/// picture_001.jpgを使用し、
+/// 9マスすべてに写真が表示されるロゴにする。
 class _SlidePuzzleLogo extends StatelessWidget {
   const _SlidePuzzleLogo();
 
   @override
   Widget build(BuildContext context) {
-    const double logoSize = 88;
-    const double spacing = 3;
+    // ロゴサイズを144から180に拡大
+    const double logoSize = 180;
 
     return Align(
       alignment: Alignment.center,
-      child: SizedBox.square(
-        dimension: logoSize,
-        child: Container(
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: logoSize,
+        height: logoSize,
+        padding: const EdgeInsets.all(2.5),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          // 角丸なしの四角い外枠
+          border: Border.all(
+            color: AppColors.primary,
+            width: 2.5,
           ),
-          child: Column(
-            children: [
-              for (int row = 0; row < 3; row++) ...[
-                if (row > 0) const SizedBox(height: spacing),
-                Expanded(
-                  child: Row(
-                    children: [
-                      for (int column = 0; column < 3; column++) ...[
-                        if (column > 0) const SizedBox(width: spacing),
-                        Expanded(
-                          child: _buildTile(row, column),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.20),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Pictureモードで使用している画像
+            // 角丸なしで表示
+            Image.asset(
+              'assets/images/picture_001.jpg',
+              fit: BoxFit.cover,
+            ),
+
+            // 3×3のパズル盤面の区切り線
+            CustomPaint(
+              painter: _PuzzleLogoGridPainter(),
+              child: const SizedBox.expand(),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  /// 数字タイルまたは空白マスを生成
-  Widget _buildTile(int row, int column) {
-    final int number = row * 3 + column + 1;
+/// ロゴ上に3×3の区切り線を描画する
+class _PuzzleLogoGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = AppColors.background.withValues(alpha: 0.85)
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke;
 
-    // 右下を空白マスにする
-    if (number == 9) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.25),
-            width: 1.5,
-          ),
-        ),
+    // 縦方向の区切り線
+    for (int i = 1; i < 3; i++) {
+      final double x = size.width * i / 3;
+
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height),
+        paint,
       );
     }
 
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        '$number',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+    // 横方向の区切り線
+    for (int i = 1; i < 3; i++) {
+      final double y = size.height * i / 3;
+
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(
+    covariant _PuzzleLogoGridPainter oldDelegate,
+  ) {
+    return false;
   }
 }
