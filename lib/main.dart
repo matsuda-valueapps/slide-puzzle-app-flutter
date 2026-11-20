@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'constants/app_colors.dart';
 import 'constants/picture_options.dart';
@@ -17,11 +18,66 @@ void main() {
   runApp(const MyApp());
 }
 
+/// Lora Bold（700）を適用したTextThemeを生成する
+TextTheme _buildLoraTextTheme() {
+  final TextTheme baseTheme = GoogleFonts.loraTextTheme();
+
+  return baseTheme.copyWith(
+    displayLarge: baseTheme.displayLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    displayMedium: baseTheme.displayMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    displaySmall: baseTheme.displaySmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    headlineLarge: baseTheme.headlineLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    headlineMedium: baseTheme.headlineMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    headlineSmall: baseTheme.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    titleLarge: baseTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    titleMedium: baseTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    titleSmall: baseTheme.titleSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    bodyLarge: baseTheme.bodyLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    bodyMedium: baseTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    bodySmall: baseTheme.bodySmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    labelLarge: baseTheme.labelLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    labelMedium: baseTheme.labelMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+    labelSmall: baseTheme.labelSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    ),
+  );
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme loraTextTheme = _buildLoraTextTheme();
+
     return MaterialApp(
       title: 'Slide Puzzle',
       debugShowCheckedModeBanner: false,
@@ -29,6 +85,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF3B82F6),
         ),
+
+        // アプリ全体の標準フォントをLoraに設定
+        fontFamily: GoogleFonts.lora().fontFamily,
+
+        // アプリ全体の文字をLora Bold（700）に設定
+        textTheme: loraTextTheme,
+
+        // AppBarなどのプライマリテキストにも適用
+        primaryTextTheme: loraTextTheme,
+
         useMaterial3: true,
       ),
       home: const MainPage(),
