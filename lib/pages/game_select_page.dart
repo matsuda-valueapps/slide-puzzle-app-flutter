@@ -46,6 +46,8 @@ class _GameSelectPageState extends State<GameSelectPage> {
         return 'Zigzag';
       case PuzzlePattern.swirl:
         return 'Swirl';
+      case PuzzlePattern.tornado:
+        return 'Tornado';  
     }
   }
 

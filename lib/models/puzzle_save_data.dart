@@ -32,9 +32,9 @@ class PuzzleSaveData {
       );
     }
 
-    if (settings.boardSize < 3 || settings.boardSize > 7) {
+    if (settings.boardSize < 3 || settings.boardSize > 8) {
       throw ArgumentError(
-        'boardSize must be between 3 and 7.',
+        'boardSize must be between 3 and 8.',
       );
     }
 

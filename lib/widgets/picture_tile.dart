@@ -107,7 +107,7 @@ class PictureTile extends StatelessWidget {
   Widget build(BuildContext context) {
     // 盤面サイズとタイル番号の整合性を確認
     if (boardSize < 3 ||
-        boardSize > 7 ||
+        boardSize > 8 ||
         number < 0 ||
         number >= boardSize * boardSize) {
       return SizedBox(

@@ -22,7 +22,7 @@ class PuzzleEngine {
   static const int minBoardSize = 3;
 
   /// 対応する最大盤面サイズ
-  static const int maxBoardSize = 7;
+  static const int maxBoardSize = 8;
 
   /// デフォルトのシャッフル回数
   static const int defaultShuffleMoves = 500;

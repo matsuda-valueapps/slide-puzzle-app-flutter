@@ -11,7 +11,7 @@ class PuzzleState {
   /// 完成時の盤面
   final List<int> goalBoard;
 
-  /// 盤面サイズ（3～7）
+  /// 盤面サイズ（3～8）
   final int boardSize;
 
   /// タイルの移動回数
@@ -37,8 +37,8 @@ class PuzzleState {
     this.isCompleted = false,
   })  : board = List.unmodifiable(board),
         goalBoard = List.unmodifiable(goalBoard) {
-    if (boardSize < 3 || boardSize > 7) {
-      throw ArgumentError('Board size must be between 3 and 7.');
+    if (boardSize < 3 || boardSize > 8) {
+      throw ArgumentError('Board size must be between 3 and 8.');
     }
 
     if (board.length != boardSize * boardSize) {

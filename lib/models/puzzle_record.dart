@@ -9,7 +9,7 @@ class PuzzleRecord {
   /// ゲームタイプ
   final GameType gameType;
 
-  /// 盤面サイズ（3～7）
+  /// 盤面サイズ（3～8）
   final int boardSize;
 
   /// パズルの完成パターン
@@ -37,8 +37,8 @@ class PuzzleRecord {
     required this.bestMoveCount,
     required this.achievedAt,
   }) {
-    if (boardSize < 3 || boardSize > 7) {
-      throw ArgumentError('boardSize must be between 3 and 7.');
+    if (boardSize < 3 || boardSize > 8) {
+      throw ArgumentError('boardSize must be between 3 and 8.');
     }
 
     if (bestTimeSeconds < 0) {

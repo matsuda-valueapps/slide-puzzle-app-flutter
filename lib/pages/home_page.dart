@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
 
                           // アプリタイトル
                           const Text(
-                            'Eazy Slide Puzzle',
+                            'Ritzy Slide Puzzle',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 36,
@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
 
                           // フッター
                           const Text(
-                            'Eazy Slide Puzzle',
+                            'Ritzy Slide Puzzle',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,

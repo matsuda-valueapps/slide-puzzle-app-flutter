@@ -78,7 +78,7 @@ class PuzzleBoard extends StatelessWidget {
 
     // 盤面データの整合性を確認
     if (boardSize < 3 ||
-        boardSize > 7 ||
+        boardSize > 8 ||
         board.length != boardSize * boardSize) {
       return const Center(
         child: Text('Invalid puzzle board'),

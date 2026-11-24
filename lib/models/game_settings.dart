@@ -18,12 +18,13 @@ class GameSettings {
     5,
     6,
     7,
+    8,
   ];
 
   /// ゲームタイプ
   final GameType gameType;
 
-  /// 盤面サイズ（3～7）
+  /// 盤面サイズ（3～8）
   final int boardSize;
 
   /// 完成パターン
@@ -38,8 +39,8 @@ class GameSettings {
     this.boardSize = 3,
     this.pattern = PuzzlePattern.normal,
   }) : assert(
-          boardSize >= 3 && boardSize <= 7,
-          'Board size must be between 3 and 7.',
+          boardSize >= 3 && boardSize <= 8,
+          'Board size must be between 3 and 8.',
         );
 
   /// 盤面サイズが有効かどうか

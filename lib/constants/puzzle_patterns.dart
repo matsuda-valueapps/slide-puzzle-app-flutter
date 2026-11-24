@@ -7,11 +7,12 @@ enum PuzzlePattern {
   vertical,
   zigzag,
   swirl,
+  tornado,
 }
 
 /// スライドパズルの完成盤面を生成するクラス
 ///
-/// 対応サイズ：3×3 ～ 7×7
+/// 対応サイズ：3×3 ～ 8×8
 ///
 /// 生成した盤面は PuzzleEngine の
 /// shuffleBoard() および isSolved() に渡して使用できます。
@@ -19,7 +20,7 @@ class PuzzlePatterns {
   PuzzlePatterns._();
 
   static const int minBoardSize = 3;
-  static const int maxBoardSize = 7;
+  static const int maxBoardSize = 8;
   static const int blankTile = 0;
 
   /// パターン名を取得
@@ -35,10 +36,12 @@ class PuzzlePatterns {
         return 'Zigzag';
       case PuzzlePattern.swirl:
         return 'Swirl';
+      case PuzzlePattern.tornado:
+        return 'Tornado';
     }
   }
 
-  /// 5種類のパターン一覧を取得
+  /// 6種類のパターン一覧を取得
   static List<PuzzlePattern> get allPatterns {
     return PuzzlePattern.values;
   }
@@ -74,6 +77,9 @@ class PuzzlePatterns {
 
       case PuzzlePattern.swirl:
         return _createSwirl(boardSize);
+
+      case PuzzlePattern.tornado:
+        return _createTornado(boardSize);
     }
   }
 
@@ -294,6 +300,116 @@ class PuzzlePatterns {
         }
         left++;
       }
+    }
+
+    return board;
+  }
+
+  /// 6. Tornado
+  ///
+  /// Swirlの空白マスの位置を1の開始位置にします。
+  ///
+  /// 奇数サイズ：
+  /// 中央から左 → 下 → 右 → 上の順に進みます。
+  ///
+  /// 偶数サイズ：
+  /// 中央4マスの左下から
+  /// 右 → 上 → 左 → 下の順に進みます。
+  ///
+  /// 盤面の外側にはみ出す位置は飛ばします。
+  ///
+  /// 最後の1マスは空白（0）として残します。
+  ///
+  /// 3×3：
+  /// □ 8 7
+  /// 2 1 6
+  /// 3 4 5
+  ///
+  /// 4×4：
+  /// □ 15 14 13
+  /// 5  4  3 12
+  /// 6  1  2 11
+  /// 7  8  9 10
+  static List<int> _createTornado(int boardSize) {
+    final int totalTiles = boardSize * boardSize;
+
+    final List<int> board = List<int>.filled(
+      totalTiles,
+      blankTile,
+    );
+
+    // Swirlの空白位置をTornadoの開始位置にする。
+    //
+    // 奇数サイズ：中央
+    // 偶数サイズ：中央4マスの左下
+    int row = boardSize ~/ 2;
+    int column = (boardSize - 1) ~/ 2;
+
+    int number = 1;
+
+    // 進行方向：
+    // 0 = 左
+    // 1 = 下
+    // 2 = 右
+    // 3 = 上
+    //
+    // 奇数サイズ：左から開始
+    // 偶数サイズ：右から開始
+    int direction = boardSize.isEven ? 2 : 0;
+
+    // 各方向への移動回数
+    int stepLength = 1;
+
+    // 最初の数字を中央に配置
+    board[row * boardSize + column] = number;
+
+    // 次の数字から外側へ広げる
+    while (number < totalTiles - 1) {
+      // 同じ移動回数で2方向ずつ進む
+      for (int repeat = 0; repeat < 2; repeat++) {
+        for (int step = 0; step < stepLength; step++) {
+          // 進行方向に1マス移動
+          switch (direction) {
+            case 0:
+              column--;
+              break;
+            case 1:
+              row++;
+              break;
+            case 2:
+              column++;
+              break;
+            case 3:
+              row--;
+              break;
+          }
+
+          // 盤面の範囲内にある位置だけ数字を配置
+          if (row >= 0 &&
+              row < boardSize &&
+              column >= 0 &&
+              column < boardSize) {
+            number++;
+
+            board[row * boardSize + column] = number;
+
+            // 最後の1マスは空白として残す
+            if (number >= totalTiles - 1) {
+              break;
+            }
+          }
+        }
+
+        // 次の方向へ進む
+        direction = (direction + 1) % 4;
+
+        if (number >= totalTiles - 1) {
+          break;
+        }
+      }
+
+      // 2方向進んだら移動回数を1増やす
+      stepLength++;
     }
 
     return board;

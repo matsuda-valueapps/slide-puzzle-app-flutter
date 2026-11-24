@@ -68,6 +68,44 @@ void main() {
 
       expect(board, [1, 2, 3, 8, 0, 4, 7, 6, 5]);
     });
+
+    // --------------------------------------------------
+    // 6. Tornado
+    // --------------------------------------------------
+
+    test('Tornado - 3×3の完成盤面を正しく生成できる', () {
+      final board = PuzzlePatterns.createGoalBoard(
+        boardSize: 3,
+        pattern: PuzzlePattern.tornado,
+      );
+
+      expect(
+        board,
+        [
+          0, 8, 7,
+          2, 1, 6,
+          3, 4, 5,
+        ],
+      );
+    });
+
+    test('Tornado - 偶数サイズでは中央4マスの左下から開始する', () {
+      for (final size in [4, 6, 8]) {
+        final board = PuzzlePatterns.createGoalBoard(
+          boardSize: size,
+          pattern: PuzzlePattern.tornado,
+        );
+
+        final int centerLowerLeftIndex =
+            (size ~/ 2) * size + (size ~/ 2 - 1);
+
+        expect(
+          board[centerLowerLeftIndex],
+          1,
+          reason: 'Tornado $size×$size',
+        );
+      }
+    });
   });
 
   // ----------------------------------------------------
@@ -75,9 +113,9 @@ void main() {
   // ----------------------------------------------------
 
   group('PuzzlePatterns - 盤面の整合性', () {
-    test('3×3～7×7の全パターンで正しいマス数になる', () {
+    test('3×3～8×8の全パターンで正しいマス数になる', () {
       for (final pattern in PuzzlePatterns.allPatterns) {
-        for (int size = 3; size <= 7; size++) {
+        for (int size = 3; size <= 8; size++) {
           final board = PuzzlePatterns.createGoalBoard(
             boardSize: size,
             pattern: pattern,
@@ -86,7 +124,8 @@ void main() {
           expect(
             board.length,
             size * size,
-            reason: '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
+            reason:
+                '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
           );
         }
       }
@@ -94,7 +133,7 @@ void main() {
 
     test('全パターンで数字の重複や欠落がない', () {
       for (final pattern in PuzzlePatterns.allPatterns) {
-        for (int size = 3; size <= 7; size++) {
+        for (int size = 3; size <= 8; size++) {
           final board = PuzzlePatterns.createGoalBoard(
             boardSize: size,
             pattern: pattern,
@@ -105,7 +144,8 @@ void main() {
           expect(
             sortedBoard,
             List<int>.generate(size * size, (index) => index),
-            reason: '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
+            reason:
+                '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
           );
         }
       }
@@ -113,7 +153,7 @@ void main() {
 
     test('全パターンで空白マスは必ず1つ存在する', () {
       for (final pattern in PuzzlePatterns.allPatterns) {
-        for (int size = 3; size <= 7; size++) {
+        for (int size = 3; size <= 8; size++) {
           final board = PuzzlePatterns.createGoalBoard(
             boardSize: size,
             pattern: pattern,
@@ -122,7 +162,8 @@ void main() {
           expect(
             board.where((tile) => tile == 0).length,
             1,
-            reason: '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
+            reason:
+                '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
           );
         }
       }
@@ -130,7 +171,7 @@ void main() {
 
     test('全パターンで空白以外の数字が正しく存在する', () {
       for (final pattern in PuzzlePatterns.allPatterns) {
-        for (int size = 3; size <= 7; size++) {
+        for (int size = 3; size <= 8; size++) {
           final board = PuzzlePatterns.createGoalBoard(
             boardSize: size,
             pattern: pattern,
@@ -139,7 +180,8 @@ void main() {
           expect(
             board.where((tile) => tile != 0).length,
             size * size - 1,
-            reason: '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
+            reason:
+                '${PuzzlePatterns.getPatternName(pattern)} $size×$size',
           );
         }
       }
@@ -151,7 +193,7 @@ void main() {
   // ----------------------------------------------------
 
   group('PuzzlePatterns - パターン名', () {
-    test('5種類のパターン名を正しく取得できる', () {
+    test('6種類のパターン名を正しく取得できる', () {
       expect(
         PuzzlePatterns.getPatternName(PuzzlePattern.normal),
         'Normal',
@@ -176,10 +218,15 @@ void main() {
         PuzzlePatterns.getPatternName(PuzzlePattern.swirl),
         'Swirl',
       );
+
+      expect(
+        PuzzlePatterns.getPatternName(PuzzlePattern.tornado),
+        'Tornado',
+      );
     });
 
-    test('5種類のパターンが登録されている', () {
-      expect(PuzzlePatterns.allPatterns.length, 5);
+    test('6種類のパターンが登録されている', () {
+      expect(PuzzlePatterns.allPatterns.length, 6);
     });
   });
 
@@ -198,10 +245,10 @@ void main() {
       );
     });
 
-    test('8×8の盤面生成はエラーになる', () {
+    test('9×9の盤面生成はエラーになる', () {
       expect(
         () => PuzzlePatterns.createGoalBoard(
-          boardSize: 8,
+          boardSize: 9,
           pattern: PuzzlePattern.normal,
         ),
         throwsArgumentError,

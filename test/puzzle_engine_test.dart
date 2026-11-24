@@ -18,8 +18,8 @@ void main() {
       );
     });
 
-    test('4×4～7×7の完成盤面を正しく生成できる', () {
-      for (int size = 4; size <= 7; size++) {
+    test('4×4～8×8の完成盤面を正しく生成できる', () {
+      for (int size = 4; size <= 8; size++) {
         final board = PuzzleEngine.createSolvedBoard(size);
 
         expect(board.length, equals(size * size));
@@ -40,9 +40,9 @@ void main() {
       );
     });
 
-    test('8×8の盤面生成はエラーになる', () {
+    test('9×9の盤面生成はエラーになる', () {
       expect(
-        () => PuzzleEngine.createSolvedBoard(8),
+        () => PuzzleEngine.createSolvedBoard(9),
         throwsArgumentError,
       );
     });
@@ -201,7 +201,7 @@ void main() {
 
   group('PuzzleEngine - シャッフル', () {
     test('シャッフル後の盤面は正しいマス数になる', () {
-      for (int size = 3; size <= 7; size++) {
+      for (int size = 3; size <= 8; size++) {
         final board = PuzzleEngine.shuffleBoard(
           boardSize: size,
           random: Random(42),
@@ -215,7 +215,7 @@ void main() {
     });
 
     test('シャッフル後も全ての数字が1つずつ存在する', () {
-      for (int size = 3; size <= 7; size++) {
+      for (int size = 3; size <= 8; size++) {
         final board = PuzzleEngine.shuffleBoard(
           boardSize: size,
           random: Random(size),
@@ -236,7 +236,7 @@ void main() {
     });
 
     test('シャッフル後の盤面は完成状態ではない', () {
-      for (int size = 3; size <= 7; size++) {
+      for (int size = 3; size <= 8; size++) {
         final solvedBoard =
             PuzzleEngine.createSolvedBoard(size);
 
