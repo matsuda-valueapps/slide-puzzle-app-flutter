@@ -86,6 +86,9 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF3B82F6),
         ),
 
+        // アプリ全体の背景色をネイビーに統一
+        scaffoldBackgroundColor: AppColors.background,
+
         // アプリ全体の標準フォントをLoraに設定
         fontFamily: GoogleFonts.lora().fontFamily,
 
@@ -95,10 +98,41 @@ class MyApp extends StatelessWidget {
         // AppBarなどのプライマリテキストにも適用
         primaryTextTheme: loraTextTheme,
 
+        // ページ遷移アニメーションを設定
+        // Android・iOSではアニメーションを無効化
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android:
+                _NoPageTransitionsBuilder(),
+            TargetPlatform.iOS:
+                _NoPageTransitionsBuilder(),
+          },
+        ),
+
         useMaterial3: true,
       ),
       home: const MainPage(),
     );
+  }
+}
+
+/// ページ遷移アニメーションを無効にする
+///
+/// 画面をフェード・移動させず、
+/// 遷移先の画面をそのまま表示する。
+class _NoPageTransitionsBuilder
+    extends PageTransitionsBuilder {
+  const _NoPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
   }
 }
 
