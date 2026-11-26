@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
     final TextTheme loraTextTheme = _buildLoraTextTheme();
 
     return MaterialApp(
-      title: 'Slide Puzzle',
+      title: 'Ritzy Slide Puzzle',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
