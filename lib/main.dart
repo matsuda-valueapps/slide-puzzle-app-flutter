@@ -98,7 +98,61 @@ class MyApp extends StatelessWidget {
         // AppBarなどのプライマリテキストにも適用
         primaryTextTheme: loraTextTheme,
 
-        // ページ遷移アニメーションを設定
+        // =====================================
+        // ボタンのタップ演出を無効化
+        // =====================================
+
+        // 波紋アニメーションを無効化
+        splashFactory: NoSplash.splashFactory,
+
+        // タップ時の波紋・ハイライトを透明化
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+
+        // ElevatedButtonのタップ時の色変化を無効化
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            overlayColor:
+                const WidgetStatePropertyAll<Color>(
+              Colors.transparent,
+            ),
+          ),
+        ),
+
+        // OutlinedButtonのタップ時の色変化を無効化
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            overlayColor:
+                const WidgetStatePropertyAll<Color>(
+              Colors.transparent,
+            ),
+          ),
+        ),
+
+        // TextButtonのタップ時の色変化を無効化
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            overlayColor:
+                const WidgetStatePropertyAll<Color>(
+              Colors.transparent,
+            ),
+          ),
+        ),
+
+        // IconButtonのタップ時の色変化を無効化
+        iconButtonTheme: IconButtonThemeData(
+          style: ButtonStyle(
+            overlayColor:
+                const WidgetStatePropertyAll<Color>(
+              Colors.transparent,
+            ),
+          ),
+        ),
+
+        // =====================================
+        // ページ遷移アニメーション
+        // =====================================
+
         // Android・iOSではアニメーションを無効化
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
